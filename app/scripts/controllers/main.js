@@ -1,10 +1,8 @@
 'use strict';
 
-angular.module('angularJsoneditorApp')
-  .controller('MainCtrl', function ($scope) {
-    $scope.awesomeThings = [
-      'HTML5 Boilerplate',
-      'AngularJS',
-      'Karma'
-    ];
-  });
+angular.module('angularJsonEditor')
+  .controller(
+    'MainCtrl',
+    function ($scope) {
+    }
+  );

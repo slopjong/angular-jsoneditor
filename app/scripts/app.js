@@ -1,3 +1,3 @@
 'use strict';
 
-angular.module('angularJsoneditorApp', []);
+angular.module('angularJsonEditor', ['jsoneditor']);

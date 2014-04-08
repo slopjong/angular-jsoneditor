@@ -1,0 +1,24 @@
+
+.je-splitter {
+    display: flex;
+    flex-direction: row;
+}
+
+.je-container,
+.je-ace, .je-ace textarea,
+.je-text, .je-text textarea {
+    width: 100%;
+}
+
+.je-container {
+    height: 300px;
+}
+
+.je-ace, .je-ace textarea,
+.je-text, .je-text textarea {
+    height: 100%;
+}
+
+.je-ace {
+    border: solid 1px #eee;
+}
