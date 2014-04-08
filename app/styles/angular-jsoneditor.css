@@ -12,6 +12,7 @@
 
 .je-container {
     height: 300px;
+    border: solid 1px #aaa;
 }
 
 .je-ace, .je-ace textarea,
@@ -19,6 +20,6 @@
     height: 100%;
 }
 
-.je-ace {
-    border: solid 1px #eee;
+textarea {
+    border: none;
 }
