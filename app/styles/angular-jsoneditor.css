@@ -23,3 +23,23 @@
 textarea {
     border: none;
 }
+
+.je-drag {
+    margin-left: 5px;
+    margin-right: 5px;
+    border-radius: 3px;
+
+    color: #D3D3D3;
+    cursor: col-resize;
+    font-size: 32px;
+    min-width: 34px;
+
+    display: flex;
+    text-align: center;
+    align-items: center;
+    vertical-align: middle;
+}
+
+.je-drag:hover {
+    background: #f5f5f5;
+}
