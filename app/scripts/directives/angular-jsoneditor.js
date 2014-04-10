@@ -2,18 +2,10 @@
 
 angular.module("jsoneditor", ['ui.ace'])
 
-  .directive("jeSplitter", ['$timeout', function($timeout) {
+  .directive("jeSplitter", function($compile) {
     return {
       restrict: 'EA',
-//      template: '<div class="je-splitter" ng-transclude></div>',
-      template: function(a, b, c) {
-        var el = b.$$element;
-        var el2 = angular.element(el[0]);
-        //console.log('template', el2);
-
-//        console.log(arguments);
-        return '<div class="je-splitter" ng-transclude></div>';
-      },
+      template: '<div class="je-splitter" ng-transclude></div>',
       replace: true,
       transclude: true,
       controller: function jeSplitterController($scope, $element, $attrs, $transclude) {
@@ -27,46 +19,102 @@ angular.module("jsoneditor", ['ui.ace'])
               showPrintMargin: false,
               useWrapMode: true
             }
+          },
+          width: {
+            total: 0,
+            left: 0,
+            right: 0
           }
         };
 
-        // TODO: the additional containers are hidden by css
-        //       this should be done here but there was trouble to access
-        //       $$element properly to remove the containers from the dom
-        this.addSplitter = function() {
-//          console.log('add splitter', arguments);
+//        $scope.getElementDimensions = function () {
+//          return { 'h': $element.height(), 'w': $element.width() };
+//        };
+//
+//        $scope.$watch(
+//          $scope.getElementDimensions,
+//          function (newValue, oldValue) {
+//            console.log(newValue);
+//          },
+//          true
+//        );
+
+//        $element.bind('resize', function () {
+//          //$scope.$apply();
+//          console.log('resized');
+//        });
+
+        /**
+         * Removes all non-containers. If there are more than two containers
+         * all of them are removed too except the first two.
+         *
+         * @param splitter_block
+         */
+        this.removeChildren = function(splitter_block) {
+
+          var amount_children = splitter_block[0].children.length;
+          var removed_children = 0;
+
+          // remove all direct children which are no containers
+          angular.forEach(splitter_block[0].children, function(child) {
+            if (! child.hasAttribute('je-container')) {
+              child.remove();
+              removed_children++;
+            }
+          });
+
+          // how many containers do we have?
+          var amount_containers = amount_children - removed_children;
+
+          // remove all containers except the first two
+          if (amount_containers > 2) {
+            for(var i=2; i< amount_containers; i++) {
+              splitter_block[0].children[i].remove();
+            }
+          }
         }
 
-        // TODO: the additional containers are hidden by css
-        //       this should be done here but there was trouble to access
-        //       $$element properly to remove the containers from the dom
-        this.removeContainer = function(element) {
-//          console.log(element, element[0]);
-//          console.log('remove container', arguments);
+        /**
+         * Adds a drag element after the first child of the splitter block.
+         * @param splitter_block
+         */
+        this.addDrag = function(splitter_block) {
+
+          // create the drag element
+          var drag_element = $compile('<div je-drag></div>')($scope);
+
+          // put it between both editor containers
+          angular
+            .element(splitter_block[0].children[0])
+            .after(drag_element);
         }
       },
-      link: function(scope, element, attrs, ctrl) {
-        ctrl.removeContainer(element);
-        ctrl.addSplitter(element);
-      }
+      link: function(scope, element, attrs, controller) {
 
-//      compile: function(scope, iElement, iAttr) {
-////        angular.forEach(arguments, function(element){
-////          console.log(element);
-////        })
-//        console.log('compile je-splitter', arguments);
-//        return {
-//          pre: function preLink() {
-//            console.log('prelink je-splitter', arguments);
-//          },
-//          post: function postLink() {
-//            console.log('postlink je-splitter', iElement);
+        // outputs the width of the splitter div
+//        console.log('splitter', element[0].offsetWidth);
+
+        controller.removeChildren(element);
+        controller.addDrag(element);
+
+//        if (element[0].children.length > 0) {
 //
-//          }
+//          width_left = element[0].children[0].offsetWidth;
+//          width_right = element[0].children[2].offsetWidth;
+//          width_total = width_left + width_right;
 //        }
-//      }
+//        var drag_element = $compile('<div je-drag></div>')(scope);
+//
+////        angular.element(element[0].children[0]).after('<div je-drag2></div>');
+//
+////          console.log('splitter', element[0].children[0].offsetWidth);
+//
+//
+//        ctrl.removeContainer(element);
+//        ctrl.addSplitter(element);
+      }
     };
-  }])
+  })
 
   .directive("jeContainer", function() {
     return {
@@ -84,10 +132,20 @@ angular.module("jsoneditor", ['ui.ace'])
   .directive("jeDrag", function() {
     return {
       restrict: 'EA',
-      template: '<div class="je-drag">⋮</div>',
+      controller: function jeDragController($scope, $element, $attrs, $transclude) {
+        $scope.dragging = false;
+        $scope.move = function() {
+          console.log('move');
+        }
+      },
+      template: '<div class="je-drag" ' +
+        'ng-mousemove="move()" ' +
+        'ng-mousedown="dragging = true" ' +
+        'ng-mouseup="dragging = false"' +
+        '>⋮</div>',
       replace: true,
       link: function($scope, iElement, iAttr) {
-//        console.log('link je-container');
+//        console.log('link je-drag');
 //        console.log($scope.$parent);
       }
     };
