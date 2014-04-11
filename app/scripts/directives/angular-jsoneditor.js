@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module("jsoneditor", ['ui.ace'])
+angular.module("jsoneditor", ['je.ace', 'je.text', 'je.tree'])
 
   .directive("jeSplitter", function($compile) {
     return {
@@ -204,41 +204,6 @@ angular.module("jsoneditor", ['ui.ace'])
       replace: true,
       link: function($scope, iElement, iAttr) {
 //        console.log('link je-drag');
-      }
-    };
-  })
-
-  .directive("jeText", function() {
-    return {
-      restrict: 'EA',
-      template: '<div class="je-text"><textarea ng-model="$parent.jsoneditor.json"></textarea></div>',
-      replace: true,
-      link: function(scope, iElement, iAttr) {
-//        console.log('link je-text');
-      }
-    };
-  })
-
-  .directive("jeAce", function() {
-    return {
-      restrict: 'EA',
-      template: '<div class="je-ace" ui-ace="$parent.jsoneditor.ace.options" ng-model="$parent.jsoneditor.json"></div>',
-      replace: true,
-      transclude: true,
-      link: function(scope, iElement, iAttr) {
-//        console.log('link je-ace');
-      }
-    };
-  })
-
-  .directive("jeTree", function() {
-    return {
-      restrict: 'EA',
-      template: '<div class="je-tree"><textarea ng-model="$parent.jsoneditor.json"></textarea></div>',
-      replace: true,
-      transclude: true,
-      link: function(scope, iElement, iAttr) {
-//        console.log('link je-tree');
       }
     };
   })
