@@ -197,7 +197,7 @@ angular.module("jsoneditor", ['ui.ace'])
     return {
       restrict: 'EA',
       controller: function jeDragController($scope, $element, $attrs, $transclude) {},
-      template: '<div class="je-drag" ' +
+      template: '<div class="je-drag je-unselectable" ' +
         'ng-mousedown="jsoneditor.dragging = true" ' +
         'ng-mouseup="jsoneditor.dragging = false"' +
         '>⋮</div>',

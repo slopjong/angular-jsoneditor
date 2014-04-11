@@ -47,3 +47,10 @@ textarea {
 .je-drag:hover {
     background: #f5f5f5;
 }
+
+.je-unselectable {
+    user-select: none;
+    -moz-user-select: none;
+    -khtml-user-select: none;
+    behavior: url(unselectable.htc);
+}
