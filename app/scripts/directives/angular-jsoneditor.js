@@ -5,44 +5,96 @@ angular.module("jsoneditor", ['ui.ace'])
   .directive("jeSplitter", function($compile) {
     return {
       restrict: 'EA',
-      template: '<div class="je-splitter" ng-transclude></div>',
+      template: '<div ng-mousemove="move($event)" ng-mouseleave="jsoneditor.dragging = false" class="je-splitter" ng-transclude></div>',
       replace: true,
       transclude: true,
       controller: function jeSplitterController($scope, $element, $attrs, $transclude) {
+
+        // we scope our stuff to avoid conflicts with inherited scopes
         $scope.jsoneditor = {
-          json: '{"test": "tasdfasdf"}',
+          json: '{}',
           ace: {
             options: {
               mode: 'json',
               showIndentGuides: false,
-              showInvisibles: true,
+              showInvisibles: false,
               showPrintMargin: false,
               useWrapMode: true
             }
           },
-          width: {
-            total: 0,
-            left: 0,
-            right: 0
+          container: {
+            width: {
+              left: 100,
+              right: 100
+            },
+            editor: {
+              left: null,
+              right: null
+            }
+          },
+          dragElement: null,
+          dragging: false
+        };
+
+        $scope.move = function move($event) {
+          if ($scope.jsoneditor.dragging) {
+            // get the cursor's relative position inside the splitter
+            // container, the unit is %
+            var cursor_pos = $event.clientX - $element[0].offsetLeft;
+            var splitter_width = $element[0].offsetWidth;
+            var rel_position = 100 * cursor_pos / splitter_width;
+            $scope.resizeEditors(rel_position);
           }
         };
 
-//        $scope.getElementDimensions = function () {
-//          return { 'h': $element.height(), 'w': $element.width() };
-//        };
-//
-//        $scope.$watch(
-//          $scope.getElementDimensions,
-//          function (newValue, oldValue) {
-//            console.log(newValue);
-//          },
-//          true
-//        );
+        // here we do data binding ourselves since we can't rely on
+        // angular's native one because we dynamically remove and add
+        // elements in the splitter container after the containers and
+        // thus the editors have been compiled and linked
+        $scope.$watch('jsoneditor.container.width', function(newValue) {
+          if (
+            angular.isObject($scope.jsoneditor.container.editor.left) &&
+            angular.isObject($scope.jsoneditor.container.editor.right)
+          ) {
+            $scope.jsoneditor.container.editor.left.style.width = newValue.left + '%';
+            $scope.jsoneditor.container.editor.right.style.width = newValue.right + '%';
+          }
+        }, true);
 
-//        $element.bind('resize', function () {
-//          //$scope.$apply();
-//          console.log('resized');
-//        });
+        $scope.resizeEditors = function resizeEditors(cursor_position) {
+
+          /* DO NOTHING HERE IF DRAGGING IS DISABLED */
+
+          if ($scope.jsoneditor.dragging) {
+
+            var splitter_width = $element[0].offsetWidth;
+            var offset = 0;
+
+            if (angular.isObject($scope.jsoneditor.dragElement)) {
+
+              // get the drag element's width respecting the margin,
+              // padding and the border
+
+              var drag_element = $scope.jsoneditor.dragElement[0];
+
+              // get the element's computed margin,
+              // currentStyle = msie, the other for anything else
+              var style = drag_element.currentStyle ||
+                window.getComputedStyle(drag_element);
+
+              var margin = parseInt(style.marginLeft, 10)
+                + parseInt(style.marginRight, 10);
+
+              var drag_width = margin + drag_element.offsetWidth;
+
+              offset = 100 * (drag_width / splitter_width) / 2;
+            }
+
+            // set the editor dimension in percentage
+            $scope.jsoneditor.container.width.left = cursor_position - offset;
+            $scope.jsoneditor.container.width.right = 100 - cursor_position - offset;
+          }
+        };
 
         /**
          * Removes all non-containers. If there are more than two containers
@@ -50,7 +102,7 @@ angular.module("jsoneditor", ['ui.ace'])
          *
          * @param splitter_block
          */
-        this.removeChildren = function(splitter_block) {
+        this.removeChildren = function removeChildren(splitter_block) {
 
           var amount_children = splitter_block[0].children.length;
           var removed_children = 0;
@@ -72,13 +124,26 @@ angular.module("jsoneditor", ['ui.ace'])
               splitter_block[0].children[i].remove();
             }
           }
-        }
+        };
+
+        /**
+         * @deprecated
+         * @param element
+         * @param name
+         * @param value
+         */
+        this.addAttribute = function addAttribute(element, name, value) {
+          var attribute = document.createAttribute(name);
+          attribute.nodeValue = value;
+          element.setAttributeNode(attribute);
+        };
 
         /**
          * Adds a drag element after the first child of the splitter block.
          * @param splitter_block
+         * @return drag element
          */
-        this.addDrag = function(splitter_block) {
+        this.addDrag = function addDrag(splitter_block) {
 
           // create the drag element
           var drag_element = $compile('<div je-drag></div>')($scope);
@@ -87,31 +152,21 @@ angular.module("jsoneditor", ['ui.ace'])
           angular
             .element(splitter_block[0].children[0])
             .after(drag_element);
-        }
+
+          return drag_element;
+        };
       },
       link: function(scope, element, attrs, controller) {
 
-        // outputs the width of the splitter div
-//        console.log('splitter', element[0].offsetWidth);
-
         controller.removeChildren(element);
-        controller.addDrag(element);
 
-//        if (element[0].children.length > 0) {
-//
-//          width_left = element[0].children[0].offsetWidth;
-//          width_right = element[0].children[2].offsetWidth;
-//          width_total = width_left + width_right;
-//        }
-//        var drag_element = $compile('<div je-drag></div>')(scope);
-//
-////        angular.element(element[0].children[0]).after('<div je-drag2></div>');
-//
-////          console.log('splitter', element[0].children[0].offsetWidth);
-//
-//
-//        ctrl.removeContainer(element);
-//        ctrl.addSplitter(element);
+        // make the two editor instances public to the scope
+        scope.jsoneditor.container.editor.left = element[0].children[0];
+        scope.jsoneditor.container.editor.right = element[0].children[1];
+
+        // add a drag element to the splitter container and make it
+        // public to the scope
+        scope.jsoneditor.dragElement = controller.addDrag(element);
       }
     };
   })
@@ -119,7 +174,11 @@ angular.module("jsoneditor", ['ui.ace'])
   .directive("jeContainer", function() {
     return {
       restrict: 'EA',
-      template: '<div class="je-container" ng-transclude></div>',
+      template: '<div ng-style="" class="je-container" ng-transclude></div>',
+//      template: function() {
+//        console.log(arguments);
+//        return '<div ng-style="" class="je-container" ng-transclude></div>';
+//      },
       replace: true,
       transclude: true,
       link: function($scope, iElement, iAttr) {
@@ -132,21 +191,14 @@ angular.module("jsoneditor", ['ui.ace'])
   .directive("jeDrag", function() {
     return {
       restrict: 'EA',
-      controller: function jeDragController($scope, $element, $attrs, $transclude) {
-        $scope.dragging = false;
-        $scope.move = function() {
-          console.log('move');
-        }
-      },
+      controller: function jeDragController($scope, $element, $attrs, $transclude) {},
       template: '<div class="je-drag" ' +
-        'ng-mousemove="move()" ' +
-        'ng-mousedown="dragging = true" ' +
-        'ng-mouseup="dragging = false"' +
+        'ng-mousedown="jsoneditor.dragging = true" ' +
+        'ng-mouseup="jsoneditor.dragging = false"' +
         '>⋮</div>',
       replace: true,
       link: function($scope, iElement, iAttr) {
 //        console.log('link je-drag');
-//        console.log($scope.$parent);
       }
     };
   })
@@ -162,7 +214,7 @@ angular.module("jsoneditor", ['ui.ace'])
     };
   })
 
-  .directive("jeAce", function($compile) {
+  .directive("jeAce", function() {
     return {
       restrict: 'EA',
       template: '<div class="je-ace" ui-ace="$parent.jsoneditor.ace.options" ng-model="$parent.jsoneditor.json"></div>',
