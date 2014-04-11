@@ -11,6 +11,11 @@ angular.module("jsoneditor", ['ui.ace'])
       controller: function jeSplitterController($scope, $element, $attrs, $transclude) {
 
         // we scope our stuff to avoid conflicts with inherited scopes
+        // -> as long as ng-transclude is true we must inherit from the
+        //    parent scope, to understand how transclusion & inheritance
+        //    works, see
+        //      * http://sravi-kiran.blogspot.de/2013/07/BehaviourOfScopeInAngularJsDirectives.html
+        //      * http://stackoverflow.com/questions/16653004/confused-about-angularjs-transcluded-and-isolate-scopes-bindings
         $scope.jsoneditor = {
           json: '{}',
           ace: {
