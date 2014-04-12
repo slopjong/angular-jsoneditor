@@ -71,6 +71,12 @@ angular.module("jsoneditor", ['je.ace', 'je.text', 'je.tree'])
           }
         });
 
+        // stringify the object on changes, there seems to be no side
+        // effect when watching the json and the object at the same time
+        $scope.$watch('jsoneditor.object', function(newValue) {
+          $scope.jsoneditor.json = JSON.stringify(newValue);
+        }, true);
+
         $scope.move = function move($event) {
           if ($scope.jsoneditor.dragging) {
             // get the cursor's relative position inside the splitter
