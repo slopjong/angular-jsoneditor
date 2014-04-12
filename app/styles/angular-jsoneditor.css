@@ -54,3 +54,32 @@ textarea {
     -khtml-user-select: none;
     behavior: url(unselectable.htc);
 }
+
+/*.je-tree table {*/
+    /*width: 100%;*/
+/*}*/
+/*.je-tree > table > tbody > tr > td:nth-child(1),*/
+/*.je-tree > table > tbody > tr > td:nth-child(2){*/
+    /*width: 24px;*/
+/*}*/
+
+
+.je-helper-amount.je-helper-object:before {
+    content: '{';
+}
+
+.je-helper-amount.je-helper-object:after {
+    content: '}';
+}
+
+.je-helper-amount.je-helper-array:before {
+    content: '[';
+}
+
+.je-helper-amount.je-helper-array:after {
+    content: ']';
+}
+
+.black {
+    background: black;
+}

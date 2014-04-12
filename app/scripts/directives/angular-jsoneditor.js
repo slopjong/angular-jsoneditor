@@ -10,6 +10,25 @@ angular.module("jsoneditor", ['je.ace', 'je.text', 'je.tree'])
       transclude: true,
       controller: function jeSplitterController($scope, $element, $attrs, $transclude) {
 
+        var sample_object = {
+          "array": [
+            1,
+            2,
+            3
+          ],
+          "boolean": true,
+          "null": null,
+          "number": 123,
+          "object": {
+            "a": "b",
+            "c": "d",
+            "e": "f"
+          },
+          "string": "Hello World"
+        }
+
+//        console.log(JSON.stringify(sample_object));
+
         // we scope our stuff to avoid conflicts with inherited scopes
         // -> as long as ng-transclude is true we must inherit from the
         //    parent scope, to understand how transclusion & inheritance
@@ -17,7 +36,9 @@ angular.module("jsoneditor", ['je.ace', 'je.text', 'je.tree'])
         //      * http://sravi-kiran.blogspot.de/2013/07/BehaviourOfScopeInAngularJsDirectives.html
         //      * http://stackoverflow.com/questions/16653004/confused-about-angularjs-transcluded-and-isolate-scopes-bindings
         $scope.jsoneditor = {
-          json: '{}',
+          json: JSON.stringify(sample_object),
+          object: {},
+          tree: [],
           ace: {
             options: {
               mode: 'json',
@@ -40,6 +61,15 @@ angular.module("jsoneditor", ['je.ace', 'je.text', 'je.tree'])
           dragElement: null,
           dragging: false
         };
+
+        // observe json changes and parse the string if there are any
+        $scope.$watch('jsoneditor.json', function(newJson) {
+          try {
+            $scope.jsoneditor.object = JSON.parse(newJson);
+          } catch(e) {
+            console.log('could not parse the json');
+          }
+        });
 
         $scope.move = function move($event) {
           if ($scope.jsoneditor.dragging) {
