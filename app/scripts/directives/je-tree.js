@@ -7,24 +7,30 @@ angular
       template:
         '<div class="je-tree">' +
         '  <ul class="je-tree-node clear">' +
-        '    <je-tree-node ng-repeat="(key, val) in jsoneditor.object" key="key" val="val"/>' +
+        '    <je-tree-node ng-repeat="(key, val) in jsoneditor.object" amount="amount" key="key" val="val"/>' +
         '  </ul>' +
         '</div>',
       replace: true,
       link: function($scope, iElement, iAttr) {
 
         $scope.title = 'Sample';
-        $scope.amount = function amount() {
-          var obj = $scope.jsoneditor.object;
+
+        $scope.amount = function amount(collection) {
+
+          if (! angular.isArray(collection) && ! angular.isObject(collection)) {
+            return null;
+          }
+
           var size = 0, key;
 
           // no idea why we need the hasOwnProperty check but
           // http://stackoverflow.com/a/6700
           // has over 600 upvotes so there must be a very good reason for it
           // => TODO: to skip the prototyped properties, remove the test
-          for (key in obj) {
-            if (obj.hasOwnProperty(key)) size++;
+          for (key in collection) {
+            if (collection.hasOwnProperty(key)) size++;
           }
+
           return size;
         };
       }
@@ -34,21 +40,36 @@ angular
   .directive('jeTreeNode', function ($compile) {
     return {
       restrict: 'EA',
-      template: '<li>{{key}} <span class="je-helper-amount je-helper-{{val | jeType}}">{{val | jeType}}</span></li>',
+      template:
+          '<li>' +
+          '  <span class="je-tree-node-key">{{key}}</span>' +
+          '  <span class="je-tree-node-value">{{val | jeTreeNodeValue}}</span> ' +
+          '  <span class="je-tree-node-amount je-tree-node-type-{{ val | jeType}}">{{amount(val)}}</span>' +
+          '</li>',
       replace: true,
       scope: {
         key: "=",
-        val: "="
+        val: "=",
+        amount: "="
       },
       link: function (scope, element) {
+        scope.children = null;
+
         scope.$watch('val', function() {
           var template =
             '<ul>' +
             '  <je-tree-node ' +
             '    ng-repeat="(childkey, childval) in val | jeCollection" ' +
             '    key="childkey" val="childval" />' +
+            '    amount="amount"' +
             '</ul>';
-          element.append($compile(template)(scope));
+
+          if (angular.isElement(scope.children)) {
+            scope.children.remove();
+          }
+
+          scope.children = $compile(template)(scope);
+          element.append(scope.children);
         });
       }
     };
