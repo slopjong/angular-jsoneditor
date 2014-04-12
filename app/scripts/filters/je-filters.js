@@ -7,25 +7,31 @@ angular
   .filter('jeCollection', function() {
     return function(input) {
 
-      if ( ! angular.isArray(input) && ! angular.isObject(input)) {
-        return [];
+      if (angular.isArray(input) || angular.isArray(input)) {
+        return input;
       }
 
-      return input;
+      return [];
     };
   })
 
   .filter('jeType', function() {
     return function(input) {
-      return typeof input;
+      var type = 'atomic';
+      switch(true) {
+        case angular.isArray(input): type = 'array'; break;
+        case angular.isObject(input): type = 'object'; break;
+      }
+      return type;
     };
   })
 
   .filter('jeTreeNodeValue', function() {
     return function(input) {
 
-      if ( ! angular.isArray(input) && ! angular.isObject(input)) {
-        return input;
+      // strings are considered array-like so isArrayLike() can't be used
+      if (angular.isArray(input) || angular.isObject(input)) {
+        return '';
       }
 
       // 'can't interpolate' whatever error appeared with the following
@@ -33,7 +39,7 @@ angular
 //        return 'null';
 //      }
 
-      return '';
+      return input;
     };
   })
 
