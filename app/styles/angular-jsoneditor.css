@@ -74,3 +74,11 @@ textarea {
 .je-tree-node-key-value-seperator:before {
     content: '➜';
 }
+
+.je-tree ul {
+    padding-left: 30px;
+}
+
+.je-tree li {
+    margin-left: -10px;
+}
