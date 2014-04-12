@@ -70,3 +70,7 @@ textarea {
 .je-tree-node-type-array:after {
     content: ']';
 }
+
+.je-tree-node-key-value-seperator:before {
+    content: '➜';
+}

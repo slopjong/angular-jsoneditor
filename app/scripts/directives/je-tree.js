@@ -43,6 +43,7 @@ angular
       template:
           '<li>' +
           '  <span class="je-tree-node-key">{{key}}</span>' +
+          '  <span class="je-tree-node-key-value-seperator" ng-show="valAtomic(val)"></span>' +
           '  <span class="je-tree-node-value">{{val | jeTreeNodeValue}}</span> ' +
           '  <span class="je-tree-node-amount je-tree-node-type-{{ val | jeType}}">{{amount(val)}}</span>' +
           '</li>',
@@ -54,6 +55,10 @@ angular
       },
       link: function (scope, element) {
         scope.children = null;
+
+        scope.valAtomic = function valAtomic(val) {
+          return ! (angular.isArray(val) || angular.isObject(val));
+        }
 
         scope.$watch('val', function() {
 
