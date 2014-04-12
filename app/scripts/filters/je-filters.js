@@ -35,9 +35,10 @@ angular
       }
 
       // 'can't interpolate' whatever error appeared with the following
-//      if (angular.isNull(input)) {
-//        return 'null';
-//      }
+      //if (angular.isNull(input)) {
+      if (input === null) {
+        return 'null';
+      }
 
       return input;
     };
