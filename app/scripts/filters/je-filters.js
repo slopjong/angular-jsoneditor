@@ -7,7 +7,7 @@ angular
   .filter('jeCollection', function() {
     return function(input) {
 
-      if (angular.isArray(input) || angular.isArray(input)) {
+      if (angular.isArray(input) || angular.isObject(input)) {
         return input;
       }
 
