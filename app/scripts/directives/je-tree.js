@@ -56,10 +56,11 @@ angular
         scope.children = null;
 
         scope.$watch('val', function() {
+
           var template =
             '<ul>' +
             '  <je-tree-node ' +
-            '    ng-repeat="(childkey, childval) in val | jeCollection" ' +
+            '    ng-repeat="(childkey, childval) in val | jeCollection track by $id(childkey)" ' +
             '    key="childkey" val="childval" />' +
             '    amount="amount"' +
             '</ul>';
