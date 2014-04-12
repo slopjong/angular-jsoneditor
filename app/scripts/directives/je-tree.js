@@ -41,7 +41,7 @@ angular
     return {
       restrict: 'EA',
       template:
-          '<li>' +
+          '<li ng-style="treeOpener(val)">' +
           '  <span class="je-tree-node-key">{{key}}</span>' +
           '  <span class="je-tree-node-key-value-seperator" ng-show="valAtomic(val)"></span>' +
           '  <span class="je-tree-node-value">{{val | jeTreeNodeValue}}</span> ' +
@@ -55,6 +55,17 @@ angular
       },
       link: function (scope, element) {
         scope.children = null;
+
+        scope.treeOpener = function treeOpener(val) {
+
+          if (!scope.valAtomic(val)) {
+            return '';
+          }
+
+          return {
+            listStyleType: 'none'
+          };
+        }
 
         scope.valAtomic = function valAtomic(val) {
           return ! (angular.isArray(val) || angular.isObject(val));
