@@ -42,9 +42,9 @@ angular
       restrict: 'EA',
       template:
           '<li ng-style="treeOpener(val)">' +
-          '  <span class="je-tree-node-key">{{key}}</span>' +
-          '  <span class="je-tree-node-key-value-seperator" ng-show="valAtomic(val)"></span>' +
-          '  <span class="je-tree-node-value">{{val | jeTreeNodeValue}}</span> ' +
+          '  <span class="je-tree-node-key" contenteditable="true">{{key}}</span>' +
+          '  <span class="je-tree-node-key-value-seperator" contenteditable="true" ng-show="valAtomic(val)"></span>' +
+          '  <span class="je-tree-node-value" contenteditable="true">{{val | jeTreeNodeValue}}</span> ' +
           '  <span class="je-tree-node-amount je-tree-node-type-{{ val | jeType}}">{{amount(val)}}</span>' +
           '</li>',
       replace: true,

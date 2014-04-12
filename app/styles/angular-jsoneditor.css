@@ -82,3 +82,10 @@ textarea {
 .je-tree li {
     margin-left: -10px;
 }
+
+.je-tree span[contenteditable="true"]:hover,
+.je-tree span[contenteditable="true"]:focus {
+    background-color: #FFFFAB;
+    border: solid 1px #FFFF00;
+    border-radius: 2px;
+}
