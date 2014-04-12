@@ -202,12 +202,17 @@ angular.module("jsoneditor", ['je.ace', 'je.text', 'je.tree'])
         controller.removeChildren(element);
 
         // make the two editor instances public to the scope
-        scope.jsoneditor.container.editor.left = element[0].children[0];
-        scope.jsoneditor.container.editor.right = element[0].children[1];
+        if (element[0].children.length > 0) {
+          scope.jsoneditor.container.editor.left = element[0].children[0];
 
-        // add a drag element to the splitter container and make it
-        // public to the scope
-        scope.jsoneditor.dragElement = controller.addDrag(element);
+          if (element[0].children.length > 1) {
+            scope.jsoneditor.container.editor.right = element[0].children[1];
+
+            // add a drag element to the splitter container and make it
+            // public to the scope
+            scope.jsoneditor.dragElement = controller.addDrag(element);
+          }
+        }
       }
     };
   })
