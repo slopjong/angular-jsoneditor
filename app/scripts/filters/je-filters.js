@@ -21,4 +21,20 @@ angular
     };
   })
 
+  .filter('jeTreeNodeValue', function() {
+    return function(input) {
+
+      if ( ! angular.isArray(input) && ! angular.isObject(input)) {
+        return input;
+      }
+
+      // 'can't interpolate' whatever error appeared with the following
+//      if (angular.isNull(input)) {
+//        return 'null';
+//      }
+
+      return '';
+    };
+  })
+
   ;
