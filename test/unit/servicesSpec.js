@@ -118,8 +118,8 @@ describe('services', function() {
                 ]
               }
             ]
-        }
-      ];
+          }
+        ];
 
       expect( jeConverter.ast2object(test_data) ).toEqual(test_result);
 
