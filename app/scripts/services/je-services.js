@@ -68,6 +68,19 @@ angular
             break;
 
           case item.type === 'array':
+
+            var arr = [];
+            if (item.hasOwnProperty('children') &&
+              angular.isArray(item.children)) {
+
+              angular.forEach(ast2object(item.children), function(element){
+                arr.push(element);
+              });
+
+              object[item.key] = arr;
+            }
+            break;
+
           case item.type === 'object':
 
             if (item.hasOwnProperty('children') &&
