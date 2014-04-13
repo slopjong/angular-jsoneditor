@@ -38,6 +38,7 @@ angular.module("jsoneditor", ['je.ace', 'je.text', 'je.tree'])
         $scope.jsoneditor = {
           json: JSON.stringify(sample_object),
           object: {},
+          ast: [],
           tree: [],
           ace: {
             options: {
@@ -64,11 +65,63 @@ angular.module("jsoneditor", ['je.ace', 'je.text', 'je.tree'])
 
         // observe json changes and parse the string if there are any
         $scope.$watch('jsoneditor.json', function(newJson) {
+
           try {
             $scope.jsoneditor.object = JSON.parse(newJson);
           } catch(e) {
             console.log('could not parse the json');
+            return;
           }
+
+          var build_ast = function(input) {
+
+            var ast = [];
+
+            angular.forEach(input, function(value, key){
+
+              switch(true) {
+
+                case value === null:
+
+                  ast.push({
+                    key: key,
+                    type: 'null',
+                    value: 'null'
+                  });
+                  break;
+
+                // this case must be before the object case because
+                // arrays are also considered as objects
+                case angular.isArray(value):
+
+                  ast.push({
+                    key: key,
+                    type: 'array',
+                    children: build_ast(value)
+                  });
+                  break;
+
+                case angular.isObject(value):
+
+                  ast.push({
+                    key: key,
+                    type: 'object',
+                    children: build_ast(value)
+                  });
+
+                default:
+                  ast.push({
+                    key: key,
+                    type: typeof value,
+                    value: value
+                  });
+              }
+            })
+
+            return ast;
+          };
+
+          $scope.jsoneditor.ast = build_ast($scope.jsoneditor.object);
         });
 
         // stringify the object on changes, there seems to be no side
