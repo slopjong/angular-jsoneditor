@@ -126,4 +126,31 @@ describe('services', function() {
     }));
   });
 
+  describe('Converter ast2object object2ast roundtrip', function() {
+
+    // TODO: this test isn't very useful
+    //       in angular [0,1] is the same than {"0":0,"1":1}
+    it('All data types mixed', inject(function(jeConverter) {
+
+      var data = {
+        anumber: 1,
+        anobject: {
+          anarray: [
+            {
+              astring: 'astring'
+            }
+          ],
+          anotherarray: [
+            1,
+            2
+          ]
+        }
+      };
+
+      var result = jeConverter.ast2object(jeConverter.object2ast(data));
+      expect(result).toEqual(data);
+
+    }));
+  });
+
 });
