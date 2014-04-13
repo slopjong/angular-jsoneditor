@@ -1,5 +1,9 @@
-node_modules
-dist
-.tmp
+logs/*
+!.gitkeep
+node_modules/
+app/bower_components/
+dist/
 .sass-cache
-app/bower_components
+.tmp
+.DS_Store
+.idea

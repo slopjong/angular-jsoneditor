@@ -1,8 +1,10 @@
 {
   "name": "angular-oh-my-splitter",
+  "description": "A JSON editor based on AngularJS",
   "version": "0.0.0",
+  "homepage": "https://github.com/slopjong/angular-jsoneditor",
   "dependencies": {
-    "angular": "1.2.6",
+    "angular": "1.2.15",
     "angular-bootstrap": "0.10.0",
     "angular-ui-ace": "https://github.com/angular-ui/ui-ace.git#bower",
     "bootstrap": "~3.0.3",
@@ -10,7 +12,7 @@
     "json3": "~3.2.6"
   },
   "devDependencies": {
-    "angular-mocks": "1.2.6",
-    "angular-scenario": "1.2.6"
+    "angular-loader": "1.2.15",
+    "angular-mocks": "1.2.15"
   }
 }
