@@ -49,14 +49,41 @@ angular
               value: value
             });
         }
-      })
+      });
 
       return ast;
     };
 
     var ast2object = function ast2object(input) {
-      // this conversion is yet a placeholder
-      return input;
+
+      var object = {};
+
+      angular.forEach(input, function(item){
+
+        switch(true) {
+
+          case item.type === 'null':
+
+            object[item.key] = null;
+            break;
+
+          case item.type === 'array':
+          case item.type === 'object':
+
+            if (item.hasOwnProperty('children') &&
+              angular.isArray(item.children)) {
+
+              object[item.key] = ast2object(item.children);
+            }
+            break;
+
+          default:
+
+            object[item.key] = item.value;
+        }
+      });
+
+      return object;
     };
 
     return {

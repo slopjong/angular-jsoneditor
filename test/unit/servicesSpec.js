@@ -76,6 +76,54 @@ describe('services', function() {
 
   describe('Converter ast2object', function() {
 
+    it('All data types mixed', inject(function(jeConverter) {
+
+      var test_result = {
+        anumber: 1,
+        anobject: {
+          anarray: [
+            {
+              astring: 'astring'
+            }
+          ]
+        }
+      };
+
+      var test_data = [
+        {
+          key: 'anumber',
+          type: 'number',
+          value: 1
+        },
+        {
+          key: 'anobject',
+          type: 'object',
+          children:
+            [
+              {
+                key: 'anarray',
+                type: 'array',
+                children: [
+                  {
+                    key: 0,
+                    type: 'object',
+                    children: [
+                      {
+                        key: 'astring',
+                        type: 'string',
+                        value: 'astring'
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+        }
+      ];
+
+      expect( jeConverter.ast2object(test_data) ).toEqual(test_result);
+
+    }));
   });
 
 });
