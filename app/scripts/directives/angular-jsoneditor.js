@@ -1,8 +1,8 @@
 'use strict';
 
-angular.module("jsoneditor", ['je.ace', 'je.text', 'je.tree'])
+angular.module("jsoneditor", ['je.services', 'je.ace', 'je.text', 'je.tree'])
 
-  .directive("jeSplitter", function($compile) {
+  .directive("jeSplitter", function($compile, jeConverter) {
     return {
       restrict: 'EA',
       template: '<div ng-mousemove="move($event)" ng-mouseleave="jsoneditor.dragging = false" class="je-splitter" ng-transclude></div>',
@@ -73,55 +73,16 @@ angular.module("jsoneditor", ['je.ace', 'je.text', 'je.tree'])
             return;
           }
 
-          var build_ast = function(input) {
+          $scope.jsoneditor.ast = jeConverter.object2ast($scope.jsoneditor.object);
+        });
 
-            var ast = [];
+        $scope.$watch('jsoneditor.ast', function(newAst) {
 
-            angular.forEach(input, function(value, key){
+          if ( ! angular.isObject(newAst)) {
+            return;
+          }
 
-              switch(true) {
-
-                case value === null:
-
-                  ast.push({
-                    key: key,
-                    type: 'null',
-                    value: 'null'
-                  });
-                  break;
-
-                // this case must be before the object case because
-                // arrays are also considered as objects
-                case angular.isArray(value):
-
-                  ast.push({
-                    key: key,
-                    type: 'array',
-                    children: build_ast(value)
-                  });
-                  break;
-
-                case angular.isObject(value):
-
-                  ast.push({
-                    key: key,
-                    type: 'object',
-                    children: build_ast(value)
-                  });
-
-                default:
-                  ast.push({
-                    key: key,
-                    type: typeof value,
-                    value: value
-                  });
-              }
-            })
-
-            return ast;
-          };
-
-          $scope.jsoneditor.ast = build_ast($scope.jsoneditor.object);
+          $scope.jsoneditor.ast = jeConverter.ast2object(newAst);
         });
 
         // stringify the object on changes, there seems to be no side
