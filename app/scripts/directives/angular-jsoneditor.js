@@ -25,7 +25,7 @@ angular.module("jsoneditor", ['je.services', 'je.ace', 'je.text', 'je.tree'])
             "e": "f"
           },
           "string": "Hello World"
-        }
+        };
 
 //        console.log(JSON.stringify(sample_object));
 
@@ -82,7 +82,7 @@ angular.module("jsoneditor", ['je.services', 'je.ace', 'je.text', 'je.tree'])
             return;
           }
 
-          $scope.jsoneditor.ast = jeConverter.ast2object(newAst);
+          $scope.jsoneditor.object = jeConverter.ast2object(newAst);
         });
 
         // stringify the object on changes, there seems to be no side
@@ -137,8 +137,8 @@ angular.module("jsoneditor", ['je.services', 'je.ace', 'je.text', 'je.tree'])
               var style = drag_element.currentStyle ||
                 window.getComputedStyle(drag_element);
 
-              var margin = parseInt(style.marginLeft, 10)
-                + parseInt(style.marginRight, 10);
+              var margin = parseInt(style.marginLeft, 10) +
+                parseInt(style.marginRight, 10);
 
               var drag_width = margin + drag_element.offsetWidth;
 
