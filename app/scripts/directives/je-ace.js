@@ -1,3 +1,5 @@
+'use strict';
+
 angular
   .module("je.ace", ['ui.ace'])
   .directive("jeAce", function() {

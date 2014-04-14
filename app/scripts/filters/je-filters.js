@@ -1,3 +1,4 @@
+'use strict';
 
 angular
   .module('je.filters', [])
@@ -19,8 +20,15 @@ angular
     return function(input) {
       var type = 'atomic';
       switch(true) {
-        case angular.isArray(input): type = 'array'; break;
-        case angular.isObject(input): type = 'object'; break;
+        case angular.isArray(input):
+
+          type = 'array';
+          break;
+
+        case angular.isObject(input):
+
+          type = 'object';
+          break;
       }
       return type;
     };

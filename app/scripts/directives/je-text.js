@@ -1,3 +1,5 @@
+'use strict';
+
 angular
   .module("je.text", [])
   .directive("jeText", function() {

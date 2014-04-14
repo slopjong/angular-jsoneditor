@@ -1,3 +1,5 @@
+'use strict';
+
 angular
 
   .module("je.tree", ['je.filters'])
