@@ -83,7 +83,7 @@ angular.module("jsoneditor", ['je.services', 'je.ace', 'je.text', 'je.tree'])
           }
 
           $scope.jsoneditor.object = jeConverter.ast2object(newAst);
-        });
+        }, true);
 
         // stringify the object on changes, there seems to be no side
         // effect when watching the json and the object at the same time
