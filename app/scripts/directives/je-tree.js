@@ -7,7 +7,7 @@ angular
       template:
         '<div class="je-tree">' +
         '  <ul class="je-tree-node clear">' +
-        '    <je-tree-node ng-repeat="(key, val) in jsoneditor.object" amount="amount" key="key" val="val"/>' +
+        '    <je-tree-node ng-repeat="item in jsoneditor.ast" amount="amount" item="item"/>' +
         '  </ul>' +
         '</div>',
       replace: true,
@@ -23,12 +23,12 @@ angular
 
           var size = 0, key;
 
-          // no idea why we need the hasOwnProperty check but
-          // http://stackoverflow.com/a/6700
-          // has over 600 upvotes so there must be a very good reason for it
-          // => TODO: to skip the prototyped properties, remove the test
           for (key in collection) {
-            if (collection.hasOwnProperty(key)) size++;
+            // we check with hasOwnProperty to avoid considering the
+            // prototyped properties
+            if (collection.hasOwnProperty(key)) {
+              size++;
+            }
           }
 
           return size;
@@ -41,16 +41,15 @@ angular
     return {
       restrict: 'EA',
       template:
-          '<li ng-style="treeOpener(val)">' +
-          '  <span class="je-tree-node-key" contenteditable="true">{{key}}</span>' +
-          '  <span class="je-tree-node-key-value-seperator" contenteditable="true" ng-show="valAtomic(val)"></span>' +
-          '  <span class="je-tree-node-value" contenteditable="true">{{val | jeTreeNodeValue}}</span> ' +
-          '  <span class="je-tree-node-amount je-tree-node-type-{{ val | jeType}}">{{amount(val)}}</span>' +
+          '<li ng-style="treeOpener(item)">' +
+          '  <span class="je-tree-node-key" contenteditable="true">{{item.key}}</span>' +
+          '  <span class="je-tree-node-key-value-seperator" ng-show="valAtomic(item)"></span>' +
+          '  <span class="je-tree-node-value" contenteditable="true">{{item.value | jeTreeNodeValue}}</span> ' +
+          '  <span class="je-tree-node-amount je-tree-node-type-{{item.type}}">{{amount(item.children)}}</span>' +
           '</li>',
       replace: true,
       scope: {
-        key: "=",
-        val: "=",
+        item: "=",
         amount: "="
       },
       link: function (scope, element) {
@@ -65,19 +64,19 @@ angular
           return {
             listStyleType: 'none'
           };
-        }
+        };
 
-        scope.valAtomic = function valAtomic(val) {
-          return ! (angular.isArray(val) || angular.isObject(val));
-        }
+        scope.valAtomic = function valAtomic(item) {
+          return ! item.hasOwnProperty('children');
+        };
 
         scope.$watch('val', function() {
 
           var template =
             '<ul>' +
             '  <je-tree-node ' +
-            '    ng-repeat="(childkey, childval) in val | jeCollection track by $id(childkey)" ' +
-            '    key="childkey" val="childval" ' +
+            '    ng-repeat="childitem in item.children | jeCollection track by $id(childitem)" ' +
+            '    item="childitem" ' +
             '    amount="amount" />' +
             '</ul>';
 
