@@ -40,6 +40,9 @@ angular.module("jsoneditor", ['je.services', 'je.ace', 'je.text', 'je.tree'])
           object: {},
           ast: [],
           tree: [],
+          sync: {
+            ast: true
+          },
           ace: {
             options: {
               mode: 'json',
@@ -73,7 +76,9 @@ angular.module("jsoneditor", ['je.services', 'je.ace', 'je.text', 'je.tree'])
             return;
           }
 
-          $scope.jsoneditor.ast = jeConverter.object2ast($scope.jsoneditor.object);
+          if ($scope.jsoneditor.sync.ast) {
+            $scope.jsoneditor.ast = jeConverter.object2ast($scope.jsoneditor.object);
+          }
         });
 
         $scope.$watch('jsoneditor.ast', function(newAst) {

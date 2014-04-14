@@ -2,12 +2,12 @@
 
 angular
 
-  .module("je.tree", ['je.filters'])
+  .module("je.tree", ['je.filters', 'sj.input'])
   .directive("jeTree", function($compile, $timeout) {
     return {
       restrict: 'EA',
       template:
-        '<div class="je-tree">' +
+        '<div ng-focus="focus" ng-mouseenter="sync(false)" ng-mouseleave="sync(true)" class="je-tree">' +
         '  <ul class="je-tree-node clear">' +
         '    <je-tree-node ng-repeat="item in jsoneditor.ast" amount="amount" item="item"/>' +
         '  </ul>' +
@@ -16,6 +16,15 @@ angular
       link: function($scope, iElement, iAttr) {
 
         $scope.title = 'Sample';
+
+        // We need to turn of the object to ast sync when changing stuff
+        // in the tree editor. The ast to object sync, however stays
+        // enabled. Because the object is synced on ast changes, the
+        // ast would synced again and thus the editable input/div/span
+        // elements would lose the focus after changing one character.
+        $scope.sync = function(flag) {
+          $scope.jsoneditor.sync.ast = flag;
+        };
 
         $scope.amount = function amount(collection) {
 
@@ -44,9 +53,10 @@ angular
       restrict: 'EA',
       template:
           '<li ng-style="treeOpener(item)">' +
-          '  <span class="je-tree-node-key" contenteditable="true">{{item.key}}</span>' +
+          '  <span class="je-tree-node-key" ng-bind="item.key"></span>' +
+          '  <input sj-input class="je-tree-node-key" type="text" ng-model="item.key">' +
           '  <span class="je-tree-node-key-value-seperator" ng-show="valAtomic(item)"></span>' +
-          '  <span class="je-tree-node-value" contenteditable="true">{{item.value | jeTreeNodeValue}}</span> ' +
+          '  <input sj-input class="je-tree-node-value" type="text" ng-model="item.value" ng-show="valAtomic(item)">' +
           '  <span class="je-tree-node-amount je-tree-node-type-{{item.type}}">{{amount(item.children)}}</span>' +
           '</li>',
       replace: true,
@@ -55,6 +65,7 @@ angular
         amount: "="
       },
       link: function (scope, element) {
+
         scope.children = null;
 
         scope.treeOpener = function treeOpener(val) {

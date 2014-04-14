@@ -83,9 +83,20 @@ textarea {
     margin-left: -10px;
 }
 
-.je-tree span[contenteditable="true"]:hover,
-.je-tree span[contenteditable="true"]:focus {
+.je-tree input:hover,
+.je-tree input:focus {
     background-color: #FFFFAB;
     border: solid 1px #FFFF00;
     border-radius: 2px;
+}
+
+.je-tree input {
+    border: none;
+    width: 30px;
+    min-width: 30px;
+    border: solid 1px transparent;
+}
+
+.je-tree {
+    overflow: auto;
 }
