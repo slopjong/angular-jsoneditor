@@ -3,19 +3,33 @@
 angular
 
   .module("je.tree", ['je.filters', 'sj.input'])
-  .directive("jeTree", function($compile, $timeout) {
+  .directive("jeTree", function($compile) {
     return {
       restrict: 'EA',
       template:
         '<div ng-focus="focus" ng-mouseenter="sync(false)" ng-mouseleave="sync(true)" class="je-tree">' +
         '  <ul class="je-tree-node clear">' +
-        '    <je-tree-node ng-repeat="item in jsoneditor.ast" amount="amount" item="item"/>' +
+        '    <je-tree-node ng-repeat="item in _ast" amount="amount" item="item"/>' +
         '  </ul>' +
         '</div>',
       replace: true,
       link: function($scope, iElement, iAttr) {
 
-        $scope.title = 'Sample';
+        // wrapper for the abstract syntax tree so that we can give
+        // it a name and add a context menu to the top level
+        $scope._ast = [
+          {
+            key: 'Sample',
+            type: 'object',
+            children: []
+          }
+        ];
+
+        // observe the ast and update update our _ast which wraps it
+        // in order to give the tree some sort of a title
+        $scope.$watch('jsoneditor.ast', function(ast) {
+          $scope._ast[0].children = ast;
+        }, true);
 
         // We need to turn of the object to ast sync when changing stuff
         // in the tree editor. The ast to object sync, however stays
@@ -53,8 +67,8 @@ angular
       restrict: 'EA',
       template:
           '<li ng-style="treeOpener(item)">' +
-          '  <span class="je-tree-node-key" ng-bind="item.key"></span>' +
-          '  <input sj-input class="je-tree-node-key" type="text" ng-model="item.key">' +
+          '  <span class="je-tree-node-key" ng-show="$parent.item.type == \'array\'" ng-bind="item.key"></span>' +
+          '  <input sj-input class="je-tree-node-key" ng-show="$parent.item.type == \'object\'" type="text" ng-model="item.key">' +
           '  <span class="je-tree-node-key-value-seperator" ng-show="valAtomic(item)"></span>' +
           '  <input sj-input class="je-tree-node-value" type="text" ng-model="item.value" ng-show="valAtomic(item)">' +
           '  <span class="je-tree-node-amount je-tree-node-type-{{item.type}}">{{amount(item.children)}}</span>' +
@@ -83,23 +97,20 @@ angular
           return ! item.hasOwnProperty('children');
         };
 
-        scope.$watch('val', function() {
+        var template =
+          '<ul>' +
+          '  <je-tree-node ' +
+          '    ng-repeat="childitem in item.children | jeCollection track by $id(childitem)" ' +
+          '    item="childitem" ' +
+          '    amount="amount" />' +
+          '</ul>';
 
-          var template =
-            '<ul>' +
-            '  <je-tree-node ' +
-            '    ng-repeat="childitem in item.children | jeCollection track by $id(childitem)" ' +
-            '    item="childitem" ' +
-            '    amount="amount" />' +
-            '</ul>';
+        if (angular.isElement(scope.children)) {
+          scope.children.remove();
+        }
 
-          if (angular.isElement(scope.children)) {
-            scope.children.remove();
-          }
-
-          scope.children = $compile(template)(scope);
-          element.append(scope.children);
-        });
+        scope.children = $compile(template)(scope);
+        element.append(scope.children);
       }
     };
   })
