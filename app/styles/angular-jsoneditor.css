@@ -94,7 +94,30 @@ textarea {
     border: none;
     width: 35px;
     min-width: 35px;
+    min-height: 22px;
     border: solid 1px transparent;
+}
+
+.je-tree input.empty-key {
+    min-width: 50px;
+}
+
+.je-tree input.empty-value {
+    min-width: 50px;
+}
+
+.je-tree input.empty-key,
+.je-tree input.empty-value {
+    border: 1px dashed #888;
+    padding-left: 3px;
+    padding-right: 3px;
+}
+
+.je-tree input.empty-key:focus,
+.je-tree input.empty-key:hover,
+.je-tree input.empty-value:focus,
+.je-tree input.empty-value:hover {
+    border: solid 1px #FFFF00;
 }
 
 .je-tree {

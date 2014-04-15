@@ -68,9 +68,9 @@ angular
       template:
           '<li ng-style="treeOpener(item)">' +
           '  <span class="je-tree-node-key" ng-show="$parent.item.type == \'array\'" ng-bind="item.key"></span>' +
-          '  <input sj-input class="je-tree-node-key" ng-show="$parent.item.type == \'object\'" type="text" ng-model="item.key">' +
+          '  <input sj-input class="je-tree-node-key {{emptyKey()}}" ng-show="$parent.item.type == \'object\'" type="text" ng-model="item.key" placeholder="Field">' +
           '  <span class="je-tree-node-key-value-seperator" ng-show="valAtomic(item)"></span>' +
-          '  <input sj-input class="je-tree-node-value" type="text" ng-model="item.value" ng-show="valAtomic(item)">' +
+          '  <input sj-input class="je-tree-node-value {{emptyValue()}}" type="text" ng-model="item.value" ng-show="valAtomic(item)" placeholder="Value">' +
           '  <span class="je-tree-node-amount je-tree-node-type-{{item.type}}">{{amount(item.children)}}</span>' +
           '</li>',
       replace: true,
@@ -79,6 +79,18 @@ angular
         amount: "="
       },
       link: function (scope, element) {
+
+        scope.emptyKey = function() {
+          if (String(scope.item.key) === '') {
+            return 'empty-key';
+          }
+        };
+
+        scope.emptyValue = function() {
+          if (String(scope.item.value) === '') {
+            return 'empty-value';
+          }
+        };
 
         scope.children = null;
 
