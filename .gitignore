@@ -6,4 +6,4 @@ dist/
 .sass-cache
 .tmp
 .DS_Store
-.idea
+.idea.grunt
