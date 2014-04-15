@@ -77,7 +77,7 @@ angular.module("jsoneditor", ['je.services', 'je.ace', 'je.text', 'je.tree'])
           }
 
           if ($scope.jsoneditor.sync.ast) {
-            $scope.jsoneditor.ast = jeConverter.object2ast($scope.jsoneditor.object);
+            $scope.jsoneditor.ast = jeConverter.object2ast($scope.jsoneditor.object, true);
           }
         });
 
