@@ -66,7 +66,7 @@ angular
     return {
       restrict: 'EA',
       template:
-          '<li ng-style="treeOpener(item)" class="je-tree-node-type-{{item.type}}">' +
+          '<li ng-style="treeOpener(item)" class="je-tree-node-type-{{item.type}} je-tree-node-type-{{$parent.item.type}}-parent">' +
           '  <span class="je-tree-node-key" ng-show="$parent.item.type == \'array\' || isRootNode()" ng-bind="item.key"></span>' +
           '  <input sj-input class="je-tree-node-key {{emptyKey()}}" ng-show="$parent.item.type == \'object\' && ! isRootNode()" type="text" ng-model="item.key" placeholder="Field">' +
           '  <span class="je-tree-node-key-value-seperator" ng-show="valAtomic(item)"></span>' +

@@ -140,3 +140,26 @@ textarea {
     font-family: droid sans mono,monospace,courier new,courier,sans-serif;
     font-size: 10pt;
 }
+
+/* COLOR THEME */
+
+.je-tree-node-amount,
+.je-tree-node-type-array-parent > .je-tree-node-key {
+    color: #808080;
+}
+
+.je-tree-node-type-number > .je-tree-node-value {
+    color: red;
+}
+
+.je-tree-node-type-boolean > .je-tree-node-value {
+    color: darkorange;
+}
+
+.je-tree-node-type-string > .je-tree-node-value {
+    color: green;
+}
+
+.je-tree-node-type-null > .je-tree-node-value {
+    color: #004ED0;
+}
