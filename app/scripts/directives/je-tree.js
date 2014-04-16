@@ -9,7 +9,7 @@ angular
       template:
         '<div ng-focus="focus" ng-mouseenter="sync(false)" ng-mouseleave="sync(true)" class="je-tree">' +
         '  <ul class="je-tree-node je-tree-root">' +
-        '    <je-tree-node ng-repeat="item in _ast" amount="amount" item="item" class="je-tree-root" level="0"/>' +
+        '    <je-tree-node ng-repeat="item in _ast" amount="amount" item="item" index="$index" class="je-tree-root" level="0" />' +
         '  </ul>' +
         '</div>',
       replace: true,
@@ -67,6 +67,8 @@ angular
       restrict: 'EA',
       template:
           '<li class="je-tree-node-type-{{item.type}} je-tree-node-type-{{$parent.item.type}}-parent">' +
+          '  <i ng-click="menu.copy(index)" class="je-tree-node-menu-copy fa fa-copy je-transparent-{{isRootNode()}}"></i> ' +
+          '  <i ng-click="menu.remove(index)" class="je-tree-node-menu-remove fa fa-minus-circle je-transparent-{{isRootNode()}}"></i> ' +
           '  <i ng-style="treeOpenerStyle" class="je-tree-opener fa fa-caret-down je-transparent-{{valAtomic(item)}}" ng-click="toggleChildren()" ></i> ' +
           '  <span class="je-tree-node-key" ng-show="$parent.item.type == \'array\' || isRootNode()" ng-bind="item.key"></span>' +
           '  <input sj-input class="je-tree-node-key {{emptyKeyClass()}}" ng-show="$parent.item.type == \'object\' && ! isRootNode()" type="text" ng-model="item.key" placeholder="Field">' +
@@ -76,11 +78,80 @@ angular
           '</li>',
       replace: true,
       scope: {
+        index: "=",
         item: "=",
         amount: "=",
         level: "="
       },
       link: function (scope, element) {
+
+        scope.menu = {
+          copy: function copy(index) {
+
+            // create an item copy and add it to the children array,
+            // this procedure doesn't depend on the item type!
+            var item_copy = angular.copy(scope.$parent.item.children[index]);
+
+            if (scope.$parent.item.type === 'array') {
+              item_copy.key = index + 1;
+              // update the moved items after index which no longer match the array indices
+              for (var i=index + 2; i<scope.$parent.item.children.length; i++) {
+                scope.$parent.item.children[i].key = i;
+              }
+            }
+
+            if (scope.$parent.item.type === 'object') {
+
+              // all the keys that end with "_copyX" with X = a number.
+              // this arra is only relevant for parent nodes that are an
+              // object, the keys of items with an array as their parent
+              // are rebased differently
+              var copy_numbers = [];
+
+              var key_prefix = item_copy.key;
+              var itemPreviouslyCopied = /_copy[0-9]*$/.test(key_prefix);
+              if (! itemPreviouslyCopied) {
+                key_prefix += '_copy';
+              } else {
+                key_prefix = key_prefix.replace(/[0-9]+$/, '');
+              }
+
+              var regex = new RegExp(key_prefix + "[0-9]*$");
+
+              angular.forEach(scope.$parent.item.children, function(item, index) {
+
+                // 1. test the regex, if false do nothing
+                // 2. substitute the key_prefix to get the number
+                // 3. add it to the copy_numbers collection
+                if (regex.test(item.key)) {
+                  var copy_number = parseInt(item.key.replace(key_prefix, ''));
+
+                  if (!isNaN(copy_number)) {
+                    copy_numbers.push(copy_number);
+                  }
+                }
+              });
+
+              if (copy_numbers.length === 0) {
+                item_copy.key = key_prefix + '0';
+              } else {
+                // sort() does a lexical sort, this means 13 < 7 and
+                // thus we define our own sorting function
+                copy_numbers.sort(function(a, b){
+                  return a-b;
+                });
+
+                var copy_number = copy_numbers[copy_numbers.length - 1] + 1;
+                item_copy.key = key_prefix + copy_number;
+              }
+            }
+
+            scope.$parent.item.children.splice(index + 1, 0, item_copy);
+          },
+          remove: function remove(index) {
+            scope.$parent.item.children.splice(index, 1);
+          }
+        };
 
         scope.children = null;
 
@@ -138,8 +209,10 @@ angular
           '<ul ng-hide="collapsed">' +
           '  <je-tree-node ' +
           '    ng-repeat="childitem in item.children | jeCollection track by $id(childitem)" ' +
+          '    index="$index" ' +
           '    item="childitem" ' +
           '    amount="amount" ' +
+          '    menu="menu" ' +
           '    level="level+1" />' +
           '</ul>';
 

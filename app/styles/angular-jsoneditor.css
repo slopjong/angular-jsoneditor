@@ -20,7 +20,8 @@
 }
 
 .je-ace, .je-ace textarea,
-.je-text, .je-text textarea {
+.je-text, .je-text textarea,
+.je-tree {
     height: 100%;
 }
 
@@ -180,6 +181,11 @@ textarea {
 
 .je-tree-opener {
     text-align: center;
-    cursor: pointer;
     width: 20px;
+}
+
+.je-tree-opener,
+.je-tree-node-menu-copy,
+.je-tree-node-menu-remove {
+    cursor: pointer;
 }
