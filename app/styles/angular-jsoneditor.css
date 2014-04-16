@@ -55,19 +55,28 @@ textarea {
     behavior: url(unselectable.htc);
 }
 
-.je-tree-node-type-object:before {
+.je-tree-node-amount {
+    display: none;
+}
+
+.je-tree-node-type-object > .je-tree-node-amount,
+.je-tree-node-type-array > .je-tree-node-amount {
+    display: inline;
+}
+
+.je-tree-node-type-object > .je-tree-node-amount:before {
     content: '{';
 }
 
-.je-tree-node-type-object:after {
+.je-tree-node-type-object > .je-tree-node-amount:after {
     content: '}';
 }
 
-.je-tree-node-type-array:before {
+.je-tree-node-type-array > .je-tree-node-amount:before {
     content: '[';
 }
 
-.je-tree-node-type-array:after {
+.je-tree-node-type-array > .je-tree-node-amount:after {
     content: ']';
 }
 
