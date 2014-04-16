@@ -9,11 +9,11 @@ angular
       template:
         '<div ng-focus="focus" ng-mouseenter="sync(false)" ng-mouseleave="sync(true)" class="je-tree">' +
         '  <ul class="je-tree-node clear">' +
-        '    <je-tree-node ng-repeat="item in _ast" amount="amount" item="item"/>' +
+        '    <je-tree-node ng-repeat="item in _ast" amount="amount" item="item" class="je-tree-root"/>' +
         '  </ul>' +
         '</div>',
       replace: true,
-      link: function($scope, iElement, iAttr) {
+      link: function($scope, element, attributes) {
 
         // wrapper for the abstract syntax tree so that we can give
         // it a name and add a context menu to the top level
@@ -67,8 +67,8 @@ angular
       restrict: 'EA',
       template:
           '<li ng-style="treeOpener(item)">' +
-          '  <span class="je-tree-node-key" ng-show="$parent.item.type == \'array\'" ng-bind="item.key"></span>' +
-          '  <input sj-input class="je-tree-node-key {{emptyKey()}}" ng-show="$parent.item.type == \'object\'" type="text" ng-model="item.key" placeholder="Field">' +
+          '  <span class="je-tree-node-key" ng-show="$parent.item.type == \'array\' || isRootNode()" ng-bind="item.key"></span>' +
+          '  <input sj-input class="je-tree-node-key {{emptyKey()}}" ng-show="$parent.item.type == \'object\' && ! isRootNode()" type="text" ng-model="item.key" placeholder="Field">' +
           '  <span class="je-tree-node-key-value-seperator" ng-show="valAtomic(item)"></span>' +
           '  <input sj-input class="je-tree-node-value {{emptyValue()}}" type="text" ng-model="item.value" ng-show="valAtomic(item)" placeholder="Value">' +
           '  <span class="je-tree-node-amount je-tree-node-type-{{item.type}}">{{amount(item.children)}}</span>' +
@@ -79,6 +79,10 @@ angular
         amount: "="
       },
       link: function (scope, element) {
+
+        scope.isRootNode = function isRootNode() {
+          return element.hasClass('je-tree-root');
+        };
 
         scope.emptyKey = function() {
           if (String(scope.item.key) === '') {
