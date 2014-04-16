@@ -9,7 +9,7 @@ angular
       template:
         '<div ng-focus="focus" ng-mouseenter="sync(false)" ng-mouseleave="sync(true)" class="je-tree">' +
         '  <ul class="je-tree-node je-tree-root">' +
-        '    <je-tree-node ng-repeat="item in _ast" amount="amount" item="item" class="je-tree-root"/>' +
+        '    <je-tree-node ng-repeat="item in _ast" amount="amount" item="item" class="je-tree-root" level="0"/>' +
         '  </ul>' +
         '</div>',
       replace: true,
@@ -67,7 +67,7 @@ angular
       restrict: 'EA',
       template:
           '<li class="je-tree-node-type-{{item.type}} je-tree-node-type-{{$parent.item.type}}-parent">' +
-          '  <i class="je-tree-opener fa fa-caret-down je-transparent-{{valAtomic(item)}}" ng-click="toggleChildren()" ></i> ' +
+          '  <i ng-style="treeOpenerStyle" class="je-tree-opener fa fa-caret-down je-transparent-{{valAtomic(item)}}" ng-click="toggleChildren()" ></i> ' +
           '  <span class="je-tree-node-key" ng-show="$parent.item.type == \'array\' || isRootNode()" ng-bind="item.key"></span>' +
           '  <input sj-input class="je-tree-node-key {{emptyKeyClass()}}" ng-show="$parent.item.type == \'object\' && ! isRootNode()" type="text" ng-model="item.key" placeholder="Field">' +
           '  <span class="je-tree-node-key-value-seperator" ng-show="valAtomic(item)"></span>' +
@@ -77,11 +77,16 @@ angular
       replace: true,
       scope: {
         item: "=",
-        amount: "="
+        amount: "=",
+        level: "="
       },
       link: function (scope, element) {
 
         scope.children = null;
+
+        scope.treeOpenerStyle = {
+          marginLeft: scope.level * 20 + 'px'
+        };
 
         // are the children elements collapsed?
         scope.collapsed = false;
@@ -134,7 +139,8 @@ angular
           '  <je-tree-node ' +
           '    ng-repeat="childitem in item.children | jeCollection track by $id(childitem)" ' +
           '    item="childitem" ' +
-          '    amount="amount" />' +
+          '    amount="amount" ' +
+          '    level="level+1" />' +
           '</ul>';
 
         if (angular.isElement(scope.children)) {
