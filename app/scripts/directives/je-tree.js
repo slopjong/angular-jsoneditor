@@ -8,7 +8,7 @@ angular
       restrict: 'EA',
       template:
         '<div ng-focus="focus" ng-mouseenter="sync(false)" ng-mouseleave="sync(true)" class="je-tree">' +
-        '  <ul class="je-tree-node clear">' +
+        '  <ul class="je-tree-node je-tree-root">' +
         '    <je-tree-node ng-repeat="item in _ast" amount="amount" item="item" class="je-tree-root"/>' +
         '  </ul>' +
         '</div>',
@@ -66,11 +66,12 @@ angular
     return {
       restrict: 'EA',
       template:
-          '<li ng-style="treeOpener(item)" class="je-tree-node-type-{{item.type}} je-tree-node-type-{{$parent.item.type}}-parent">' +
+          '<li class="je-tree-node-type-{{item.type}} je-tree-node-type-{{$parent.item.type}}-parent">' +
+          '  <i class="je-tree-opener fa fa-caret-down je-transparent-{{valAtomic(item)}}" ng-click="toggleChildren()" ></i> ' +
           '  <span class="je-tree-node-key" ng-show="$parent.item.type == \'array\' || isRootNode()" ng-bind="item.key"></span>' +
-          '  <input sj-input class="je-tree-node-key {{emptyKey()}}" ng-show="$parent.item.type == \'object\' && ! isRootNode()" type="text" ng-model="item.key" placeholder="Field">' +
+          '  <input sj-input class="je-tree-node-key {{emptyKeyClass()}}" ng-show="$parent.item.type == \'object\' && ! isRootNode()" type="text" ng-model="item.key" placeholder="Field">' +
           '  <span class="je-tree-node-key-value-seperator" ng-show="valAtomic(item)"></span>' +
-          '  <input sj-input class="je-tree-node-value {{emptyValue()}}" type="text" ng-model="item.value" ng-show="valAtomic(item)" placeholder="Value">' +
+          '  <input sj-input class="je-tree-node-value {{emptyValueClass()}}" type="text" ng-model="item.value" ng-show="valAtomic(item)" placeholder="Value">' +
           '  <span class="je-tree-node-amount">{{amount(item.children)}}</span>' +
           '</li>',
       replace: true,
@@ -80,33 +81,48 @@ angular
       },
       link: function (scope, element) {
 
+        scope.children = null;
+
+        // are the children elements collapsed?
+        scope.collapsed = false;
+
         scope.isRootNode = function isRootNode() {
           return element.hasClass('je-tree-root');
         };
 
-        scope.emptyKey = function() {
+        scope.emptyKeyClass = function() {
           if (String(scope.item.key) === '') {
             return 'empty-key';
           }
         };
 
-        scope.emptyValue = function() {
+        scope.emptyValueClass = function() {
           if (String(scope.item.value) === '') {
             return 'empty-value';
           }
         };
 
-        scope.children = null;
+        scope.toggleChildren = function toggleChildren() {
 
-        scope.treeOpener = function treeOpener(val) {
+          // on atomic items (item.value != object or array) the tree
+          // opener is transparent but present in the DOM. We need to
+          // skip click events on those transparent openers
+          if (! scope.valAtomic(scope.item)) {
 
-          if (!scope.valAtomic(val)) {
-            return '';
+            var treeOpener = element.find('i').eq(0);
+
+            scope.collapsed = ! scope.collapsed;
+
+            if ( ! scope.collapsed) {
+              treeOpener
+                .removeClass('fa-caret-right')
+                .addClass('fa-caret-down');
+            } else {
+              treeOpener
+                .removeClass('fa-caret-down')
+                .addClass('fa-caret-right');
+            }
           }
-
-          return {
-            listStyleType: 'none'
-          };
         };
 
         scope.valAtomic = function valAtomic(item) {
@@ -114,7 +130,7 @@ angular
         };
 
         var template =
-          '<ul>' +
+          '<ul ng-hide="collapsed">' +
           '  <je-tree-node ' +
           '    ng-repeat="childitem in item.children | jeCollection track by $id(childitem)" ' +
           '    item="childitem" ' +

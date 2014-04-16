@@ -85,11 +85,17 @@ textarea {
 }
 
 .je-tree ul {
-    padding-left: 30px;
+    padding: 0;
+    margin: 0;
+    list-style: none;
+}
+
+.je-tree ul.je-tree-root {
+    /*margin-left: 30px;*/
 }
 
 .je-tree li {
-    margin-left: -10px;
+    /*margin-left: -10px;*/
 }
 
 .je-tree input:hover,
@@ -162,4 +168,18 @@ textarea {
 
 .je-tree-node-type-null > .je-tree-node-value {
     color: #004ED0;
+}
+
+.je-transparent-true {
+    opacity: 0;
+}
+
+.je-transparent-false {
+    opacity: 1;
+}
+
+.je-tree-opener {
+    text-align: center;
+    cursor: pointer;
+    width: 20px;
 }
