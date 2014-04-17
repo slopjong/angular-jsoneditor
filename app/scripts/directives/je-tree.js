@@ -102,10 +102,10 @@ angular
 
             if (scope.$parent.item.type === 'object') {
 
-              // all the keys that end with "_copyX" with X = a number.
-              // this arra is only relevant for parent nodes that are an
-              // object, the keys of items with an array as their parent
-              // are rebased differently
+              // All the copy numbers of keys that end with "_copyX"
+              // with X = a number. This array is only relevant for parent
+              // nodes that are an object, the keys of items with an
+              // array as their parent are rebased differently
               var copy_numbers = [];
 
               var key_prefix = item_copy.key;
