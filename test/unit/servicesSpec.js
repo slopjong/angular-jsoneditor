@@ -41,24 +41,29 @@ describe('services', function() {
         {
           key: 'anumber',
           type: 'number',
+          auto: false,
           value: 1
         },
         {
           key: 'anobject',
           type: 'object',
+          auto: false,
           children:
           [
             {
               key: 'anarray',
               type: 'array',
+              auto: false,
               children: [
                 {
                   key: 0,
                   type: 'object',
+                  auto: false,
                   children: [
                     {
                       key: 'astring',
                       type: 'string',
+                      auto: false,
                       value: 'astring'
                     }
                   ]
