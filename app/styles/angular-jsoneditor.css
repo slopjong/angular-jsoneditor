@@ -186,6 +186,14 @@ textarea {
 
 .je-tree-opener,
 .je-tree-node-menu-copy,
-.je-tree-node-menu-remove {
+.je-tree-node-menu-remove,
+.je-tree-node-menu-add {
     cursor: pointer;
+}
+
+.je-tree-menu {
+    display: inline;
+    margin-right: -80px;
+    position: relative;
+    z-index: 100;
 }
