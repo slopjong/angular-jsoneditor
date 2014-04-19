@@ -3,17 +3,27 @@
 angular
 
   .module("je.tree", ['je.filters', 'sj.input'])
-  .directive("jeTree", function($compile) {
+  .directive("jeTree", function($compile, $http) {
     return {
       restrict: 'EA',
       template:
         '<div ng-focus="focus" ng-mouseenter="sync(false)" ng-mouseleave="sync(true)" class="je-tree">' +
         '  <ul class="je-tree-node je-tree-root">' +
-        '    <je-tree-node ng-repeat="item in _ast" amount="amount" item="item" index="$index" class="je-tree-root" level="0" />' +
+        '    <je-tree-node schema="schema" ng-repeat="item in _ast" amount="amount" item="item" index="$index" class="je-tree-root" level="0" />' +
         '  </ul>' +
         '</div>',
       replace: true,
       link: function($scope, element, attributes) {
+
+        // get the schema if it's defined as an attribute
+        if (angular.isDefined(element.attr('schema'))) {
+          $http.post(element.attr('schema'))
+            .success(function(data, status, headers, config) {
+              $scope.schema = data;
+            }).error(function(data, status, headers, config) {
+              $scope.schema = null;
+            });
+        }
 
         // wrapper for the abstract syntax tree so that we can give
         // it a name and add a context menu to the top level
@@ -67,6 +77,7 @@ angular
       restrict: 'EA',
       template:
           '<li class="je-tree-node-type-{{item.type}} je-tree-node-type-{{$parent.item.type}}-parent">' +
+          '  <select ng-show="item.type == \'object\' || item.type == \'array\'"><option ng-repeat="allowedChildItem in allowedChildItems">{{allowedChildItem.key}}</option></select>' +
           '  <i ng-click="menu.copy(index)" class="je-tree-node-menu-copy fa fa-copy je-transparent-{{isRootNode()}}"></i> ' +
           '  <i ng-click="menu.remove(index)" class="je-tree-node-menu-remove fa fa-minus-circle je-transparent-{{isRootNode()}}"></i> ' +
           '  <i ng-style="treeOpenerStyle" class="je-tree-opener fa fa-caret-down je-transparent-{{valAtomic(item)}}" ng-click="toggleChildren()" ></i> ' +
@@ -81,9 +92,34 @@ angular
         index: "=",
         item: "=",
         amount: "=",
-        level: "="
+        level: "=",
+        schema: "="
       },
       link: function (scope, element) {
+
+        scope.allowedChildItems = [{key: 'New ...', type: 'newItem'}];
+
+        scope.$watch('schema', function(newSchema) {
+
+          if (angular.isDefined(newSchema) && newSchema !== null) {
+
+            // walk through the properties and get the keys & types
+            if (newSchema.type === 'object') {
+              if (newSchema.hasOwnProperty('properties') && typeof newSchema.properties === 'object') {
+                angular.forEach(newSchema.properties, function(value, index) {
+                  scope.allowedChildItems.push({
+                    key: index,
+                    type: value.type
+                  });
+                });
+              }
+            }
+
+            if (scope.schema.type === 'array') {
+              // read the properties
+            }
+          }
+        });
 
         scope.menu = {
           copy: function copy(index) {
@@ -170,12 +206,14 @@ angular
           if (String(scope.item.key) === '') {
             return 'empty-key';
           }
+          return '';
         };
 
         scope.emptyValueClass = function() {
           if (String(scope.item.value) === '') {
             return 'empty-value';
           }
+          return '';
         };
 
         scope.toggleChildren = function toggleChildren() {
@@ -205,6 +243,68 @@ angular
           return ! item.hasOwnProperty('children');
         };
 
+        scope.subSchema = function subSchema(childitem) {
+
+          // check if the schema is defined and not null
+          var isSchemaDefined = angular.isDefined(scope.schema) &&
+            typeof scope.schema !== null;
+
+          // if childitem is not properly defined or if the schema is
+          // null return null as the subschema
+          switch (true) {
+            case angular.isUndefined(childitem):
+            case angular.isUndefined(childitem.type):
+            case ! isSchemaDefined:
+              return null;
+          }
+
+          var isCollection = childitem.type === 'object' ||
+            childitem.type === 'array';
+
+          // if childitem is not a collection we return null as we can't
+          // add a sub-element to a string, boolean, number etc.
+          if (! isCollection) {
+            return null;
+          }
+
+          // in the following we can assume that we're always dealing
+          // with object with no need for additional null/defined checks
+          // for the schema and the childitem and their properties
+
+          // look for the recursive flag which tells us whether to
+          // use the schema as the subschema or not, this is required
+          // if no custom schema was provided
+          var isSchemaRecursive =
+            angular.isDefined(scope.schema.recursive) &&
+            scope.schema.recursive === true;
+
+          if (isSchemaRecursive/* && angular.isDefined(scope.schema.type) &&
+            (scope.schema.type === 'object' || scope.schema.type === 'array')*/) {
+            return scope.schema;
+          }
+
+          /* look for a custom subschema in the following */
+
+          var subschema = null;
+
+          // TODO: get subschema from custom root/parent schema
+//          switch(scope.schema.type) {
+//            case 'object':
+//
+//              // fetch the subschema if the key and the type matches
+//              subschema = scope.schema.properties[childitem.key];
+//              if (subschema.type !== childitem.type ) {
+//                subschema = null;
+//              }
+//
+//              return subschema;
+//          }
+
+          return subschema;
+        };
+
+        // subSchema() is called on every mousemove event
+        // TODO: set the schema in a way that improves the performance
         var template =
           '<ul ng-hide="collapsed">' +
           '  <je-tree-node ' +
@@ -212,6 +312,7 @@ angular
           '    index="$index" ' +
           '    item="childitem" ' +
           '    amount="amount" ' +
+          '    schema="subSchema(childitem)"' +
           '    menu="menu" ' +
           '    level="level+1" />' +
           '</ul>';
