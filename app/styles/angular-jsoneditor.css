@@ -17,6 +17,7 @@
 .je-container {
     height: 300px;
     border: solid 1px #aaa;
+    text-align: left;
 }
 
 .je-ace, .je-ace textarea,
