@@ -18,6 +18,7 @@
     height: 300px;
     border: solid 1px #aaa;
     text-align: left;
+    position: relative;
 }
 
 .je-ace, .je-ace textarea,
@@ -174,10 +175,12 @@ textarea {
 
 .je-transparent-true {
     opacity: 0;
+    visibility: hidden;
 }
 
 .je-transparent-false {
     opacity: 1;
+    visibility: visible;
 }
 
 .je-tree-opener {
@@ -192,9 +195,35 @@ textarea {
     cursor: pointer;
 }
 
-.je-tree-menu {
+.je-tree-menu,
+.je-tree-body {
     display: inline;
-    margin-right: -80px;
+    /*position: absolute;*/
+    position: relative;
+}
+
+.je-tree-menu {
+    /*margin-right: -80px;*/
     position: relative;
     z-index: 100;
+}
+
+.je-tree-node-menu-add {
+    /*border: solid 1px black;*/
+    width: 15px;
+    line-height: 2em;
+}
+
+.je-tree-node-menu-add select {
+    display: none;
+}
+
+.je-tree-node-menu-add:hover {
+    width: 15px;
+    width: auto;
+}
+
+.je-tree-node-menu-add:hover select {
+    display: inline;
+    margin-right: -91px;
 }

@@ -77,7 +77,7 @@ angular
       restrict: 'EA',
       template:
           '<li class="je-tree-node-type-{{item.type}} je-tree-node-type-{{$parent.item.type}}-parent">' +
-          '  <div style="display: inline; margin-right: -80px; position: relative; z-index: 100;">' +
+          '  <div class="je-tree-menu">' +
           '    <i ng-click="menu.copy(index)" class="je-tree-node-menu-copy fa fa-copy je-transparent-{{isRootNode()}}"></i> ' +
           '    <i ng-click="menu.remove(index)" class="je-tree-node-menu-remove fa fa-minus-circle je-transparent-{{isRootNode()}}"></i> ' +
           '    <i ng-mouseover="addSelectHidden = false" ng-mouseleave="addSelectHidden = true" class="je-tree-node-menu-add fa fa-plus-circle je-transparent-{{valAtomic(item)}}">' +
@@ -86,12 +86,14 @@ angular
           '      </select> ' +
           '    </i> ' +
           '  </div> ' +
-          '  <i ng-style="treeOpenerStyle" class="je-tree-opener fa fa-caret-down je-transparent-{{valAtomic(item)}}" ng-click="toggleChildren()" ></i> ' +
-          '  <span class="je-tree-node-key" ng-show="$parent.item.type == \'array\' || isRootNode()" ng-bind="item.key"></span>' +
-          '  <input sj-input class="je-tree-node-key {{emptyKeyClass()}}" ng-show="$parent.item.type == \'object\' && ! isRootNode()" type="text" ng-model="item.key" placeholder="Field">' +
-          '  <span class="je-tree-node-key-value-seperator" ng-show="valAtomic(item)"></span>' +
-          '  <input sj-input class="je-tree-node-value {{emptyValueClass()}}" type="text" ng-model="item.value" ng-show="valAtomic(item)" placeholder="Value">' +
-          '  <span class="je-tree-node-amount">{{amount(item.children)}}</span>' +
+          '  <div class="je-tree-body"> ' +
+          '    <i ng-style="treeOpenerStyle" class="je-tree-opener fa fa-caret-down je-transparent-{{valAtomic(item)}}" ng-click="toggleChildren()" ></i> ' +
+          '    <span class="je-tree-node-key" ng-show="$parent.item.type == \'array\' || isRootNode()" ng-bind="item.key"></span>' +
+          '    <input sj-input class="je-tree-node-key {{emptyKeyClass()}}" ng-show="$parent.item.type == \'object\' && ! isRootNode()" type="text" ng-model="item.key" placeholder="Field">' +
+          '    <span class="je-tree-node-key-value-seperator" ng-show="valAtomic(item)"></span>' +
+          '    <input sj-input class="je-tree-node-value {{emptyValueClass()}}" type="text" ng-model="item.value" ng-show="valAtomic(item)" placeholder="Value">' +
+          '    <span class="je-tree-node-amount">{{amount(item.children)}}</span>' +
+          '  </div> ' +
           '</li>',
       replace: true,
       scope: {
