@@ -243,7 +243,9 @@ angular
           // skip click events on those transparent openers
           if (! scope.valAtomic(scope.item)) {
 
-            var treeOpener = element.find('i').eq(0);
+            // if we use jQlite find() works only with elements but
+            // not classes which would ease life
+            var treeOpener = element.find('i').eq(3);
 
             scope.collapsed = ! scope.collapsed;
 
