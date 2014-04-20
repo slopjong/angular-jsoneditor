@@ -81,14 +81,9 @@ angular
           '    <i ng-click="menu.copy(index)" class="je-tree-node-menu-copy fa fa-copy je-transparent-{{isRootNode()}}"></i> ' +
           '    <i ng-click="menu.remove(index)" class="je-tree-node-menu-remove fa fa-minus-circle je-transparent-{{isRootNode()}}"></i> ' +
           '    <i ng-mouseover="addSelectHidden = false" ng-mouseleave="addSelectHidden = true" class="je-tree-node-menu-add fa fa-plus-circle je-transparent-{{valAtomic(item)}}">' +
-          '      <!--<select ng-model="addSelectValue" ng-change="menu.add()" class="je-transparent-{{addSelectHidden}}"> ' +
-          '        <option value="New …" selected disabled>New …</option> ' +
-                    // TODO: use ng-options in the select element instead
-                    //       of ng-repeat in the option element, see
-                    //       http://stackoverflow.com/a/14707706
-          '        <option ng-model="addSelectValue" ng-repeat="allowedChildItem in allowedChildItems" value="{{allowedChildItem.key}}">{{allowedChildItem.key}}</option>' +
-          '      </select>--> '+
-          '      <select ng-model="addSelectValue" ng-change="menu.add(allowedChildItem)" ng-options="allowedChildItem.key for allowedChildItem in allowedChildItems"><option value="" selected disabled>New …</option></select> ' +
+          '      <select class="je-transparent-{{addSelectHidden}}" ng-model="addSelectValue" ng-change="menu.add(allowedChildItem)" ng-options="allowedChildItem.key for allowedChildItem in allowedChildItems"> ' +
+          '        <option value="" selected disabled>New …</option> ' +
+          '      </select> ' +
           '    </i> ' +
           '  </div> ' +
           '  <i ng-style="treeOpenerStyle" class="je-tree-opener fa fa-caret-down je-transparent-{{valAtomic(item)}}" ng-click="toggleChildren()" ></i> ' +
