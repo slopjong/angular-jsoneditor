@@ -6,7 +6,7 @@
   "dependencies": {
     "angular": "1.2.15",
     "angular-bootstrap": "0.10.0",
-    "angular-ui-ace": "https://github.com/angular-ui/ui-ace.git#bower",
+    "slopjong-ui-ace": "https://github.com/slopjong/ui-ace.git#master",
     "angular-ui-select2": "0.0.5",
     "angular-sj-input": "https://github.com/slopjong/angular-sj-input.git",
     "bootstrap": "~3.0.3",
