@@ -81,7 +81,7 @@ angular
           '    <i ng-click="menu.copy(index)" class="je-tree-node-menu-copy fa fa-copy je-transparent-{{isRootNode()}}"></i> ' +
           '    <i ng-click="menu.remove(index)" class="je-tree-node-menu-remove fa fa-minus-circle je-transparent-{{isRootNode()}}"></i> ' +
           '    <i ng-mouseover="addSelectHidden = false" ng-mouseleave="addSelectHidden = true" class="je-tree-node-menu-add fa fa-plus-circle je-transparent-{{valAtomic(item)}}">' +
-          '      <select class="je-transparent-{{addSelectHidden}}" ng-model="addSelectValue" ng-change="menu.add(allowedChildItem)" ng-options="allowedChildItem.key for allowedChildItem in allowedChildItems"> ' +
+          '      <select class="je-transparent-{{addSelectHidden}}" ng-model="addSelectValue" ng-change="menu.add(addSelectValue)" ng-options="allowedChildItem.key for allowedChildItem in allowedChildItems"> ' +
           '        <option value="" selected disabled>New …</option> ' +
           '      </select> ' +
           '    </i> ' +
@@ -134,8 +134,54 @@ angular
         });
 
         scope.menu = {
+
+          /**
+           * Inserts a new element to the tree and thus to the json.
+           * @param item
+           */
           add: function(item) {
-            console.log('add', item);
+
+            // we assume that item is defined and not null here, since
+            // this menu should be called by the select box only
+
+            if (angular.isUndefined(item.key) || angular.isUndefined(item.type)) {
+              throw new Error('Cannot insert new item to the tree');
+            }
+
+            var new_item = angular.copy(item);
+
+            // TODO: this shouldn't maybe false
+            new_item.auto = false;
+
+            switch (new_item.type) {
+              case 'object':
+
+                new_item.value = {};
+                new_item.children = [];
+                break;
+
+              case 'array':
+
+                new_item.value = [];
+                new_item.children = [];
+                break;
+
+              case 'boolean':
+
+                new_item.value = true;
+                break;
+
+              case 'null':
+
+                new_item.value = null;
+                break;
+
+              default:
+
+                new_item.value = '';
+            }
+
+            scope.item.children.splice(0, 0, new_item);
           },
           copy: function copy(index) {
 
