@@ -80,7 +80,7 @@ angular
           '  <div class="je-tree-menu">' +
           '    <i ng-click="menu.copy(index)" class="je-tree-node-menu-copy fa fa-copy je-transparent-{{isRootNode()}}"></i> ' +
           '    <i ng-click="menu.remove(index)" class="je-tree-node-menu-remove fa fa-minus-circle je-transparent-{{isRootNode()}}"></i> ' +
-          '    <i ng-mouseover="addSelectHidden = false" ng-mouseleave="addSelectHidden = true" class="je-tree-node-menu-add fa fa-plus-circle je-transparent-{{valAtomic(item)}}">' +
+          '    <i ng-show="allowedChildItems.length > 0" ng-mouseover="addSelectHidden = false" ng-mouseleave="addSelectHidden = true" class="je-tree-node-menu-add fa fa-plus-circle je-transparent-{{valAtomic(item)}}">' +
           '      <select class="je-transparent-{{addSelectHidden}}" ng-model="addSelectValue" ng-change="menu.add(addSelectValue)" ng-options="allowedChildItem.key for allowedChildItem in allowedChildItems"> ' +
           '        <option value="" selected disabled>New …</option> ' +
           '      </select> ' +
@@ -352,18 +352,21 @@ angular
 
           var subschema = null;
 
-          // TODO: get subschema from custom root/parent schema
-//          switch(scope.schema.type) {
-//            case 'object':
-//
-//              // fetch the subschema if the key and the type matches
+          switch(scope.schema.type) {
+            case 'object':
+
+              subschema = scope.schema.properties[childitem.key];
+              return subschema;
+
+            case 'array':
+
+              // fetch the subschema if the key and the type matches
 //              subschema = scope.schema.properties[childitem.key];
 //              if (subschema.type !== childitem.type ) {
 //                subschema = null;
 //              }
-//
-//              return subschema;
-//          }
+              return subschema;
+          }
 
           return subschema;
         };
