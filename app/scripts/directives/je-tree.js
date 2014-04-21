@@ -312,7 +312,7 @@ angular
 
           // check if the schema is defined and not null
           var isSchemaDefined = angular.isDefined(scope.schema) &&
-            typeof scope.schema !== null;
+            scope.schema !== null;
 
           // if childitem is not properly defined or if the schema is
           // null return null as the subschema
