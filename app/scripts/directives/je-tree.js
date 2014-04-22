@@ -82,7 +82,7 @@ angular
           '    <i ng-click="menu.remove(index)" class="je-tree-node-menu-remove fa fa-minus-circle je-transparent-{{isRootNode()}}"></i> ' +
           '    <i ng-show="allowedChildItems.length > 0" ng-mouseover="addSelectHidden = false" ng-mouseleave="addSelectHidden = true" class="je-tree-node-menu-add fa fa-plus-circle je-transparent-{{valAtomic(item)}}">' +
           '      <select class="je-transparent-{{addSelectHidden}}" ng-model="addSelectValue" ng-change="menu.add(addSelectValue)" ng-options="allowedChildItem.key for allowedChildItem in allowedChildItems"> ' +
-          '        <option value="" selected disabled>New …</option> ' +
+          '        <option value="" selected>New …</option> ' + // if we use the attribute 'disabled' it won't be preselected
           '      </select> ' +
           '    </i> ' +
           '  </div> ' +
@@ -121,10 +121,22 @@ angular
             if (newSchema.type === 'object') {
               if (newSchema.hasOwnProperty('properties') && typeof newSchema.properties === 'object') {
                 angular.forEach(newSchema.properties, function(value, index) {
-                  scope.allowedChildItems.push({
-                    key: index,
-                    type: value.type
-                  });
+
+                  // Check if this property is a fake item which means
+                  // that this item doesn't exist in the schema. Fake
+                  // items are used to allow multiple instances of array
+                  // items which we can't handle the same way than we
+                  // do with object properties which can exist once only.
+//                  if (newSchema.hasOwnProperty('fakeItem') && newSchema.fakeItem) {
+//                    console.log("Should push fake item");
+//                  } else {
+//                    console.log('Push');
+                      scope.allowedChildItems.push({
+                        key: index,
+                        type: value.type
+                      });
+//                  }
+
                 });
               }
             }
@@ -352,7 +364,7 @@ angular
 
           var subschema = null;
 
-          switch(scope.schema.type) {
+          switch(scope.schema.properties[childitem.key].type) {
             case 'object':
 
               subschema = scope.schema.properties[childitem.key];
@@ -360,11 +372,24 @@ angular
 
             case 'array':
 
-              // fetch the subschema if the key and the type matches
-//              subschema = scope.schema.properties[childitem.key];
-//              if (subschema.type !== childitem.type ) {
-//                subschema = null;
-//              }
+              subschema = scope.schema.properties[childitem.key].items;
+              var copy = angular.copy(subschema);
+
+              // We wrap the subschema in order to add a menu item which
+              // we couldn't render otherwise because we're dealing with
+              // an array here which can have multiple instances of the
+              // schema specified in the items property.
+              var subschema_wrapper = {
+                fakeItem: true,
+                type: 'object',
+                properties: {
+                  "New instance": copy
+                }
+              };
+
+              scope.schema.properties[childitem.key] = subschema_wrapper;
+              subschema = scope.schema.properties[childitem.key];
+
               return subschema;
           }
 
