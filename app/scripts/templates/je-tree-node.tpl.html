@@ -1,0 +1,8 @@
+<div ng-focus="focus" ng-mouseenter="sync(false)"
+     ng-mouseleave="sync(true)" class="je-tree">
+    <ul class="je-tree-node je-tree-root">
+        <je-tree-node schema="schema" ng-repeat="item in _ast"
+                      amount="amount" item="item" index="$index"
+                      class="je-tree-root" level="0"/>
+    </ul>
+</div>
