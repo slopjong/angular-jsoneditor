@@ -87,6 +87,11 @@ angular
            */
           add: function(item) {
 
+            // for the menu item "New …" the scope will be null
+            if (item === null) {
+              return;
+            }
+
             // we assume that item is defined and not null here, since
             // this menu should be called by the select box only
 
