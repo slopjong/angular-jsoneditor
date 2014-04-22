@@ -147,10 +147,6 @@ module.exports = function (grunt) {
       }
     },
 
-
-
-
-
     // Renames files for browser caching purposes
     rev: {
       dist: {
@@ -332,7 +328,6 @@ module.exports = function (grunt) {
 
   });
 
-
   grunt.registerTask('serve', function (target) {
     if (target === 'dist') {
       return grunt.task.run(['build', 'connect:dist:keepalive']);
@@ -340,7 +335,6 @@ module.exports = function (grunt) {
 
     grunt.task.run([
       'clean:server',
-      'bower-install',
       'concurrent:server',
       'autoprefixer',
       'connect:livereload',
@@ -363,7 +357,6 @@ module.exports = function (grunt) {
 
   grunt.registerTask('build', [
     'clean:dist',
-    'bower-install',
     'useminPrepare',
     'concurrent:dist',
     'autoprefixer',
