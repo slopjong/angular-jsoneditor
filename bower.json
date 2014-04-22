@@ -7,7 +7,6 @@
     "angular": "1.2.15",
     "angular-bootstrap": "0.10.0",
     "slopjong-ui-ace": "https://github.com/slopjong/ui-ace.git#master",
-    "angular-ui-select2": "0.0.5",
     "angular-sj-input": "https://github.com/slopjong/angular-sj-input.git",
     "bootstrap": "~3.0.3",
     "es5-shim": "~2.1.0",
@@ -17,5 +16,11 @@
   "devDependencies": {
     "angular-loader": "1.2.15",
     "angular-mocks": "1.2.15"
+  },
+  "ofInterest": {
+    "comment": "These are dependencies that might be interesting for future development",
+    "dependencies": {
+      "angular-ui-select2": "0.0.5"
+    }
   }
 }
