@@ -21,8 +21,40 @@ angular
             .success(function(data, status, headers, config) {
               $scope.schema = data;
             }).error(function(data, status, headers, config) {
-              $scope.schema = null;
+              throw new Error('Could not load the schema!');
             });
+        } else {
+          $scope.schema = {
+            "description":"Object",
+            "type":"object",
+            "recursive": true,
+            "properties":{
+              "Array":{
+                "description":"An array",
+                "type":"array"
+              },
+              "Object":{
+                "description":"An object",
+                "type":"object"
+              },
+              "String":{
+                "description":"A string",
+                "type":"string"
+              },
+              "Number":{
+                "description":"A number",
+                "type":"number"
+              },
+              "Boolean":{
+                "description":"A boolean",
+                "type":"boolean"
+              },
+              "Null":{
+                "description":"A null",
+                "type":"null"
+              }
+            }
+          };
         }
 
         // wrapper for the abstract syntax tree so that we can give
