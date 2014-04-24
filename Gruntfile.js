@@ -258,6 +258,14 @@ module.exports = function (grunt) {
           },
           {
             expand: true,
+            cwd: '<%= yeoman.app %>/bower_components/ace-builds/src-noconflict',
+            dest: '<%= yeoman.dist %>',
+            src: [
+              'mode-json.js'
+            ]
+          },
+          {
+            expand: true,
             cwd: '<%= yeoman.app %>/bower_components/font-awesome/fonts',
             dest: '<%= yeoman.dist %>/fonts',
             src: [
