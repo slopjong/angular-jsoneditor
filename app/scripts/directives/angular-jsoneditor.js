@@ -57,17 +57,12 @@ angular.module("jsoneditor", ['je.services', 'je.ace', 'je.text', 'je.tree'])
           if (/^(https?:)?\/\//.test(input)) {
             $http.post(input)
               .success(function(data, status, headers, config) {
-                // @todo check what happens if the ajax stuff is too fast
-                //       do we have to set jsoneditor.object instead?
-                //       => see comment a few lines below
                 $scope.jsoneditor.object = data;
               }).error(function(data, status, headers, config) {
                 throw new Error('Could not load the json!');
               });
           } else {
-            // we must set the json property because we start to watch
-            // jsoneditor.json before jsoneditor.object
-            $scope.jsoneditor.json = JSON.stringify($scope.$eval(input));
+            $scope.jsoneditor.object = $scope.$eval(input);
           }
 
         } else {
@@ -88,6 +83,17 @@ angular.module("jsoneditor", ['je.services', 'je.ace', 'je.text', 'je.tree'])
             "string": "Hello World"
           };
         }
+
+        // stringify the object on changes, there seems to be no side
+        // effect when watching the json and the object at the same time
+        // IMPORTANT: we must FIRST watch the object before we start to
+        // watch the json because the order matters for setting the
+        // initial data
+        $scope.$watch('jsoneditor.object', function(newValue) {
+          if ($scope.jsoneditor.sync.json) {
+            $scope.jsoneditor.json = JSON.stringify(newValue);
+          }
+        }, true);
 
         // observe json changes and parse the string if there are any
         $scope.$watch('jsoneditor.json', function(newJson) {
@@ -111,14 +117,6 @@ angular.module("jsoneditor", ['je.services', 'je.ace', 'je.text', 'je.tree'])
           }
 
           $scope.jsoneditor.object = jeConverter.ast2object(newAst);
-        }, true);
-
-        // stringify the object on changes, there seems to be no side
-        // effect when watching the json and the object at the same time
-        $scope.$watch('jsoneditor.object', function(newValue) {
-          if ($scope.jsoneditor.sync.json) {
-            $scope.jsoneditor.json = JSON.stringify(newValue);
-          }
         }, true);
 
         $scope.move = function move($event) {
