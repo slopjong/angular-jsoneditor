@@ -261,7 +261,8 @@ module.exports = function (grunt) {
             cwd: '<%= yeoman.app %>/bower_components/ace-builds/src-noconflict',
             dest: '<%= yeoman.dist %>',
             src: [
-              'mode-json.js'
+              'mode-json.js',
+              'worker-json.js'
             ]
           },
           {
