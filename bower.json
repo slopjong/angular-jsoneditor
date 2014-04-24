@@ -20,7 +20,8 @@
   "ofInterest": {
     "comment": "These are dependencies that might be interesting for future development",
     "dependencies": {
-      "angular-ui-select2": "0.0.5"
+      "angular-ui-select2": "0.0.5",
+      "css-element-queries": "0.0.1"
     }
   }
 }
