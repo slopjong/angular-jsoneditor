@@ -1,1 +1,1 @@
-This directory contains the pre-compiled version of *angular-oh-my-splitter* which you can use in your application.
+This directory contains the pre-compiled version of *angular-jsoneditor* which you can use in your application.
