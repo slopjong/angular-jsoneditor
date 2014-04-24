@@ -2,32 +2,13 @@
 
 angular.module("jsoneditor", ['je.services', 'je.ace', 'je.text', 'je.tree'])
 
-  .directive("jeSplitter", function($compile, jeConverter) {
+  .directive("jeSplitter", function($compile, $http, jeConverter) {
     return {
       restrict: 'EA',
       template: '<div ng-mousemove="move($event)" ng-mouseleave="jsoneditor.dragging = false" class="je-splitter" ng-transclude></div>',
       replace: true,
       transclude: true,
       controller: function jeSplitterController($scope, $element, $attrs, $transclude) {
-
-        var sample_object = {
-          "array": [
-            1,
-            2,
-            3
-          ],
-          "boolean": true,
-          "null": null,
-          "number": 123,
-          "object": {
-            "a": "b",
-            "c": "d",
-            "e": "f"
-          },
-          "string": "Hello World"
-        };
-
-//        console.log(JSON.stringify(sample_object));
 
         // we scope our stuff to avoid conflicts with inherited scopes
         // -> as long as ng-transclude is true we must inherit from the
@@ -36,7 +17,7 @@ angular.module("jsoneditor", ['je.services', 'je.ace', 'je.text', 'je.tree'])
         //      * http://sravi-kiran.blogspot.de/2013/07/BehaviourOfScopeInAngularJsDirectives.html
         //      * http://stackoverflow.com/questions/16653004/confused-about-angularjs-transcluded-and-isolate-scopes-bindings
         $scope.jsoneditor = {
-          json: JSON.stringify(sample_object),
+          json: '{}',
           object: {},
           ast: [],
           tree: [],
@@ -66,6 +47,47 @@ angular.module("jsoneditor", ['je.services', 'je.ace', 'je.text', 'je.tree'])
           dragElement: null,
           dragging: false
         };
+
+        if (angular.isDefined($element.attr('json'))) {
+
+          var input = $element.attr('json');
+
+          // if the input is a URL with a http or https scheme, fire a
+          // XHR request else try to decode it as a javascript object literal
+          if (/^(https?:)?\/\//.test(input)) {
+            $http.post(input)
+              .success(function(data, status, headers, config) {
+                // @todo check what happens if the ajax stuff is too fast
+                //       do we have to set jsoneditor.object instead?
+                //       => see comment a few lines below
+                $scope.jsoneditor.object = data;
+              }).error(function(data, status, headers, config) {
+                throw new Error('Could not load the json!');
+              });
+          } else {
+            // we must set the json property because we start to watch
+            // jsoneditor.json before jsoneditor.object
+            $scope.jsoneditor.json = JSON.stringify($scope.$eval(input));
+          }
+
+        } else {
+          $scope.jsoneditor.object = {
+            "array": [
+              1,
+              2,
+              3
+            ],
+            "boolean": true,
+            "null": null,
+            "number": 123,
+            "object": {
+              "a": "b",
+              "c": "d",
+              "e": "f"
+            },
+            "string": "Hello World"
+          };
+        }
 
         // observe json changes and parse the string if there are any
         $scope.$watch('jsoneditor.json', function(newJson) {
