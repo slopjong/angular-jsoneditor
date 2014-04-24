@@ -1,1 +1,0 @@
-The website with the splitter example will be deployed here. This is what's pushed to the `gh-pages` branch and thus available on [slopjong.github.com/angular-jsoneditor](https://slopjong.github.com/angular-jsoneditor).
