@@ -62,24 +62,24 @@ textarea {
     display: none;
 }
 
-.je-tree-node-type-object > .je-tree-node-amount,
-.je-tree-node-type-array > .je-tree-node-amount {
+.je-tree-node-type-object > .je-tree-body > .je-tree-node-amount,
+.je-tree-node-type-array > .je-tree-body > .je-tree-node-amount {
     display: inline;
 }
 
-.je-tree-node-type-object > .je-tree-node-amount:before {
+.je-tree-node-type-object > .je-tree-body > .je-tree-node-amount:before {
     content: '{';
 }
 
-.je-tree-node-type-object > .je-tree-node-amount:after {
+.je-tree-node-type-object > .je-tree-body > .je-tree-node-amount:after {
     content: '}';
 }
 
-.je-tree-node-type-array > .je-tree-node-amount:before {
+.je-tree-node-type-array > .je-tree-body > .je-tree-node-amount:before {
     content: '[';
 }
 
-.je-tree-node-type-array > .je-tree-node-amount:after {
+.je-tree-node-type-array > .je-tree-body > .je-tree-node-amount:after {
     content: ']';
 }
 
