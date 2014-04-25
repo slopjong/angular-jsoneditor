@@ -58,6 +58,19 @@ You can start off of a default JSON. Either provide a JavaScript object literal 
 
 A JavaScript object literal looks similar to JSON but they're not the same. If you use PHP you can convert your data structures with [JOL](https://github.com/slopjong/JOL).
 
+Overriding default style
+------------------------
+
+**Position the editor in the center**
+
+```
+.je-splitter {
+    width: 500px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+```
+
 Misc
 ----
 
