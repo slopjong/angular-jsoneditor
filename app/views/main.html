@@ -11,7 +11,10 @@
 
     <div je-splitter>
         <div je-container>
-            <div je-ace></div>
+            <div je-ace="{
+                  onLoad: aceLoaded,
+                  onChange: aceChanged
+                }"></div>
         </div>
         <div je-container>
             <div je-tree></div>
