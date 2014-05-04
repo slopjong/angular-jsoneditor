@@ -62,7 +62,17 @@ angular.module("jsoneditor", ['je.services', 'je.ace', 'je.text', 'je.tree'])
                 throw new Error('Could not load the json!');
               });
           } else {
-            $scope.jsoneditor.object = $scope.$eval(input);
+            try {
+              $scope.jsoneditor.object = $scope.$eval(input);
+            } catch (e) {
+              // the JSON could not be parsed so we set the json property
+              // in order to properly initialize any text editors/IDEs
+              $scope.jsoneditor.json = input;
+
+              // turn off the auto-sync to avoid resetting the json property
+              $scope.jsoneditor.sync.json = false;
+            }
+
           }
 
         } else {
@@ -95,13 +105,17 @@ angular.module("jsoneditor", ['je.services', 'je.ace', 'je.text', 'je.tree'])
           }
         }, true);
 
-        // observe json changes and parse the string if there are any
+        // observe json changes and parse the string if there are any,
+        // if the input is not a valid JSON the synchronisation will be
+        // temporarily disabled until a valid json is set
         $scope.$watch('jsoneditor.json', function(newJson) {
 
           try {
             $scope.jsoneditor.object = JSON.parse(newJson);
+            $scope.jsoneditor.sync.json = true;
           } catch(e) {
-            console.log('could not parse the json');
+            $scope.jsoneditor.sync.json = false;
+            //console.log('could not parse the json');
             return;
           }
 
