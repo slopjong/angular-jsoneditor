@@ -23,7 +23,8 @@ angular.module("jsoneditor", ['je.services', 'je.ace', 'je.text', 'je.tree'])
           tree: [],
           sync: {
             ast: true,
-            json: true
+            json: true,
+            force_off: false
           },
           ace: {
             options: {
@@ -48,6 +49,10 @@ angular.module("jsoneditor", ['je.services', 'je.ace', 'je.text', 'je.tree'])
           dragging: false
         };
 
+        if (angular.isDefined($element.attr('nosync'))) {
+          $scope.jsoneditor.sync.force_off = Boolean($element.attr('nosync'));
+        }
+
         if (angular.isDefined($element.attr('json'))) {
 
           var input = $element.attr('json');
@@ -57,22 +62,31 @@ angular.module("jsoneditor", ['je.services', 'je.ace', 'je.text', 'je.tree'])
           if (/^(https?:)?\/\//.test(input)) {
             $http.post(input)
               .success(function(data, status, headers, config) {
-                $scope.jsoneditor.object = data;
+
+                if ($scope.jsoneditor.sync.force_off) {
+                  $scope.jsoneditor.json = JSON.stringify(data);
+                } else {
+                  $scope.jsoneditor.object = data;
+                }
+
               }).error(function(data, status, headers, config) {
                 throw new Error('Could not load the json!');
               });
           } else {
-            try {
-              $scope.jsoneditor.object = $scope.$eval(input);
-            } catch (e) {
-              // the JSON could not be parsed so we set the json property
-              // in order to properly initialize any text editors/IDEs
+            if ($scope.jsoneditor.sync.force_off) {
               $scope.jsoneditor.json = input;
+            } else {
+              try {
+                $scope.jsoneditor.object = $scope.$eval(input);
+              } catch (e) {
+                // the JSON could not be parsed so we set the json property
+                // in order to properly initialize any text editors/IDEs
+                $scope.jsoneditor.json = input;
 
-              // turn off the auto-sync to avoid resetting the json property
-              $scope.jsoneditor.sync.json = false;
+                // turn off the auto-sync to avoid resetting the json property
+                $scope.jsoneditor.sync.json = false;
+              }
             }
-
           }
 
         } else {
@@ -100,6 +114,11 @@ angular.module("jsoneditor", ['je.services', 'je.ace', 'je.text', 'je.tree'])
         // watch the json because the order matters for setting the
         // initial data
         $scope.$watch('jsoneditor.object', function(newValue) {
+
+          if ($scope.jsoneditor.sync.force_off) {
+            return;
+          }
+
           if ($scope.jsoneditor.sync.json) {
             $scope.jsoneditor.json = JSON.stringify(newValue);
           }
@@ -109,6 +128,10 @@ angular.module("jsoneditor", ['je.services', 'je.ace', 'je.text', 'je.tree'])
         // if the input is not a valid JSON the synchronisation will be
         // temporarily disabled until a valid json is set
         $scope.$watch('jsoneditor.json', function(newJson) {
+
+          if ($scope.jsoneditor.sync.force_off) {
+            return;
+          }
 
           try {
             $scope.jsoneditor.object = JSON.parse(newJson);
@@ -125,6 +148,10 @@ angular.module("jsoneditor", ['je.services', 'je.ace', 'je.text', 'je.tree'])
         });
 
         $scope.$watch('jsoneditor.ast', function(newAst) {
+
+          if ($scope.jsoneditor.sync.force_off) {
+            return;
+          }
 
           if ( ! angular.isObject(newAst)) {
             return;
